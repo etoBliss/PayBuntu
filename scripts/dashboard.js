@@ -16,6 +16,22 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+const userId = firebase.auth().currentUser.uid;
+
+db.collection("transactions")
+  .where("userId", "==", userId)
+  .orderBy("timestamp", "desc")
+  .onSnapshot((querySnapshot) => {
+    const transactions = [];
+    querySnapshot.forEach((doc) => {
+      transactions.push({ id: doc.id, ...doc.data() });
+    });
+
+    // Now update your dashboard UI with this data
+    displayTransactions(transactions);
+  });
+
+
 // Format currency
 function formatCurrency(amount) {
   return new Intl.NumberFormat("en-US", {
