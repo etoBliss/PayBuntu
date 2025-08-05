@@ -87,7 +87,7 @@ async function saveUserData(user, firstName, lastName, email) {
     amount: 25000,
     currency: "NGN",
     description: "Signup Bonus",
-    status: "completed",
+    status: "success",
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
   });
 
