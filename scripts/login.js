@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         await auth.signInWithPopup(googleProvider);
-        window.location.href = "/public/dashboard.html";
+        window.location.href = "../dashboard.html";
       } catch (error) {
         console.error("Google login error:", error);
         alert(`Google login failed: ${error.message}`);
