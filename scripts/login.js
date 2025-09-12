@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
 
-        window.location.href = "/public/dashboard.html";
+        window.location.href = "../dashboard.html";
       } catch (error) {
         console.error("Login error:", error);
         alert(`Login failed: ${error.message}`);
