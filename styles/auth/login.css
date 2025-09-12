@@ -15,34 +15,39 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  align-items: start;
+  align-items: center;
 }
 #big-txt {
   /* background-color: black; */
-  font-size: 30px;
+  font-size: 32px;
   font-weight: bold;
 }
 
 #auth-form {
   display: grid;
   gap: 1.5rem;
+  padding: 3rem;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 #loginForm {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 input {
   width: 25rem;
-  height: 3rem;
+  height: 4rem;
   padding: 5px 0 0 25px;
   background-color: #f3f3f3;
   border: none;
   border-radius: 8px;
+  font-size: 14px;
 }
 input::placeholder {
-  font-size: 12px;
+  font-size: 14px;
   color: #838383;
 }
 .passVisibility {
@@ -70,18 +75,18 @@ small {
   cursor: pointer;
 }
 button[type="submit"] {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button[type="submit"]:hover {
-    background-color: #4cd964;
+  background-color: #4cd964;
 }
 
 .divider {
@@ -102,11 +107,11 @@ button[type="submit"]:hover {
 }
 
 #foot-txt {
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    margin: 0.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 4.5rem;
 }
 #foot-txt a {
-    color: #4cd964;
+  color: #4cd964;
 }
