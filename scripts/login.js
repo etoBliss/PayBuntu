@@ -26,22 +26,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const visibilityToggle = document.getElementById("visibilityToggle");
   const passwordInput = document.getElementById("password");
 
-  // visibilityToggle.innerHTML =
-  //   '<span class="material-symbols-outlined">visibility_off</span>';
-  // // 1. Password visibility toggle
-  // if (visibilityToggle && passwordInput) {
-  //   visibilityToggle.addEventListener("click", () => {
-  //     if (passwordInput.type === "password") {
-  //       passwordInput.type = "text";
-  //       visibilityToggle.innerHTML =
-  //         '<span class="material-symbols-outlined">visibility</span>';
-  //     } else {
-  //       passwordInput.type = "password";
-  //       visibilityToggle.innerHTML =
-  //         '<span class="material-symbols-outlined">visibility_off</span>';
-  //     }
-  //   });
-  // }
+  visibilityToggle.innerHTML =
+    '<span class="material-symbols-outlined">visibility_off</span>';
+  // 1. Password visibility toggle
+  if (visibilityToggle && passwordInput) {
+    visibilityToggle.addEventListener("click", () => {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        visibilityToggle.innerHTML =
+          '<span class="material-symbols-outlined">visibility</span>';
+      } else {
+        passwordInput.type = "password";
+        visibilityToggle.innerHTML =
+          '<span class="material-symbols-outlined">visibility_off</span>';
+      }
+    });
+  }
 
   // 2. Email/password login
   if (loginForm) {

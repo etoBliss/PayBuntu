@@ -66,33 +66,5 @@
     </div>
 
     <script src="/public/scripts/login.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        // Get elements using IDs that MATCH YOUR HTML
-        const loginForm = document.getElementById("loginForm");
-        const loginBtn = document.getElementById("loginBtn");
-        const googleLoginBtn = document.getElementById("googleLoginBtn");
-        const forgotPasswordLink = document.getElementById("forgotPassword");
-        const visibilityToggle = document.getElementById("visibilityToggle");
-        const passwordInput = document.getElementById("password");
-
-        visibilityToggle.innerHTML =
-          '<span class="material-symbols-outlined">visibility_off</span>';
-        // 1. Password visibility toggle
-        if (visibilityToggle && passwordInput) {
-          visibilityToggle.addEventListener("click", () => {
-            if (passwordInput.type === "password") {
-              passwordInput.type = "text";
-              visibilityToggle.innerHTML =
-                '<span class="material-symbols-outlined">visibility</span>';
-            } else {
-              passwordInput.type = "password";
-              visibilityToggle.innerHTML =
-                '<span class="material-symbols-outlined">visibility_off</span>';
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>
