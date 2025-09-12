@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paybuntu - Sign Up</title>
     <link rel="stylesheet" href="./styles/auth/login.css" />
-    <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="./assets/images/favicon/android-chrome-512x512.png"
+      type="image/x-icon"
+    />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility,visibility_off"
@@ -44,9 +48,7 @@
           </div>
           <small id="forgotPassword">Forgot Password</small>
 
-          <button type="submit" id="loginBtn">
-            Login
-          </button>
+          <button type="submit" id="loginBtn">Login</button>
         </form>
 
         <div class="divider">Or Login with</div>
@@ -61,12 +63,36 @@
           >Don't have an account? <a href="./signup.html">Singup Here</a></span
         >
       </div>
-
     </div>
 
     <script src="/public/scripts/login.js"></script>
     <script>
-      
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get elements using IDs that MATCH YOUR HTML
+        const loginForm = document.getElementById("loginForm");
+        const loginBtn = document.getElementById("loginBtn");
+        const googleLoginBtn = document.getElementById("googleLoginBtn");
+        const forgotPasswordLink = document.getElementById("forgotPassword");
+        const visibilityToggle = document.getElementById("visibilityToggle");
+        const passwordInput = document.getElementById("password");
+
+        visibilityToggle.innerHTML =
+          '<span class="material-symbols-outlined">visibility_off</span>';
+        // 1. Password visibility toggle
+        if (visibilityToggle && passwordInput) {
+          visibilityToggle.addEventListener("click", () => {
+            if (passwordInput.type === "password") {
+              passwordInput.type = "text";
+              visibilityToggle.innerHTML =
+                '<span class="material-symbols-outlined">visibility</span>';
+            } else {
+              passwordInput.type = "password";
+              visibilityToggle.innerHTML =
+                '<span class="material-symbols-outlined">visibility_off</span>';
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>
