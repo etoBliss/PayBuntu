@@ -69,6 +69,8 @@ nav {
   height: fit-content;
   background-color: #fff;
   padding-right: 3rem;
+  position: sticky;
+  top: 0;
 }
 
 .nav-item {
@@ -102,7 +104,7 @@ nav {
   color: white;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 30px;
+  border-radius: 1rem;
   font-size: 1rem;
   cursor: pointer;
   text-decoration: none;
@@ -124,4 +126,91 @@ nav {
 .btn-alt:hover {
   background-color: #2edc5b;
   color: white;
+}
+
+.hero {
+  padding: 3rem;
+  background-color: #2edc5b;
+}
+
+.hero-sec {
+  padding: 2rem 0 2rem 2rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.hero-sec1 {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  border-radius: 0.5rem;
+}
+
+.hero-boxs {
+  display: flex;
+  gap: 2rem;
+  border-radius: 0.5rem;
+}
+
+.hero-box {
+  display: grid;
+  border-radius: 0.5rem;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+  padding: 1rem;
+  height: auto;
+  background: #2edc5b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.hero-box h2 {
+  font-size: 3rem;
+}
+
+.bx2 {
+  text-align: start;
+  padding: 2rem;
+}
+
+.bx2 span {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.bx2 li {
+  font-size: 1.2rem;
+}
+
+.hero-box2 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: fit-content;
+  padding: 1rem;
+  height: auto;
+  background: #2edc5b;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
+}
+
+.hero-sec2 {
+  width: 150rem;
+  padding: 1rem;
+  height: 40rem;
+  background-image: url(/public/assets/images/mw.png);
+  background-size: cover;
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); */
+}
+.hb {
+  width: fit-content;
+  padding: 1rem;
+  height: auto;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 0.5rem;
 }
