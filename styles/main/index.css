@@ -67,7 +67,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   height: fit-content;
-  background-color: #fff;
+  background-color: #ffffffe8;
   padding-right: 3rem;
   position: sticky;
   top: 0;
@@ -134,12 +134,11 @@ nav {
 }
 
 .hero-sec {
-  padding: 2rem 0 2rem 2rem;
+  padding: 2rem 0 0rem 2rem;
   border-radius: 0.5rem;
   background-color: #fff;
   display: flex;
   gap: 2rem;
-  align-items: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
@@ -200,10 +199,10 @@ nav {
 
 .hero-sec2 {
   width: 150rem;
-  padding: 1rem;
-  height: 40rem;
+  height: auto;
   background-image: url(/public/assets/images/mw.png);
   background-size: cover;
+  place-items: end;
   /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); */
 }
 .hb {
@@ -213,4 +212,50 @@ nav {
   background: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   border-radius: 0.5rem;
+}
+
+#container {
+  background: #fff;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  padding: 10rem;
+  width: 100%;
+}
+
+.cont-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 2rem;
+  text-align: start;
+  width: 50%;
+}
+
+.cont-img {
+  width: 50%;
+  height: auto;
+}
+
+#container1 {
+  background: #2edc5b;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  padding: 10rem;
+  width: 100%;
+}
+
+.cont1-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 2rem;
+  text-align: start;
+  width: 50%;
+}
+
+.cont1-img {
+  width: 50%;
+  height: auto;
 }
