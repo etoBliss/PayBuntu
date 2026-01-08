@@ -253,9 +253,28 @@ nav {
   font-size: 2rem;
   text-align: start;
   width: 50%;
+  color: #fff;
 }
 
 .cont1-img {
   width: 50%;
   height: auto;
+}
+
+footer {
+  /* display: flex; */
+  font-size: 12px;
+  padding: 1rem 0;
+  color: #000;
+}
+
+.fcontent {
+  display: flex;
+  gap: 5rem;
+  justify-self: center;
+}
+
+.cont1 {
+  display: grid;
+  gap: 0.5rem;
 }
