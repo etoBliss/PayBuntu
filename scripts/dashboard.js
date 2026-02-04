@@ -90,10 +90,11 @@ function listenToTransactions(userId) {
   const transactionsBody = document.getElementById("transactionsBody");
 
   // Real-time listener
+  // NOTE: Removed .orderBy("timestamp") to avoid needing a manual Firestore Index creation.
+  // We will sort client-side instead.
   db.collection("transactions")
     .where("userId", "==", userId)
-    .orderBy("timestamp", "desc")
-    .limit(20)
+    .limit(50)
     .onSnapshot((snapshot) => {
       transactionsBody.innerHTML = "";
       
@@ -102,8 +103,18 @@ function listenToTransactions(userId) {
           return;
       }
 
-      snapshot.forEach((doc) => {
-        const transaction = { id: doc.id, ...doc.data() };
+      // Convert to array and sort client-side
+      let docs = [];
+      snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+      
+      // Sort by date/timestamp descending
+      docs.sort((a, b) => {
+          const dateA = a.timestamp ? a.timestamp.toDate() : new Date(a.date);
+          const dateB = b.timestamp ? b.timestamp.toDate() : new Date(b.date);
+          return dateB - dateA;
+      });
+
+      docs.forEach((transaction) => {
         const row = document.createElement("tr");
         row.style.cursor = "pointer";
         row.onclick = () => showTransactionDetails(transaction);
@@ -138,6 +149,9 @@ function listenToTransactions(userId) {
 
         transactionsBody.appendChild(row);
       });
+    }, (error) => {
+        console.error("Error listening to transactions:", error);
+        transactionsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: red;">Error loading data: ${error.message}</td></tr>`;
     });
 }
 
