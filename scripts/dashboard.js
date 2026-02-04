@@ -405,7 +405,39 @@ document.addEventListener("DOMContentLoaded", () => {
                   status: 'completed',
                   date: new Date().toISOString(),
                   timestamp: firebase.firestore.FieldValue.serverTimestamp()
-              });
+                // Mobile Sidebar Toggle Logic
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+  const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+  function toggleSidebar() {
+      sidebar.classList.toggle("active");
+      sidebarOverlay.classList.toggle("active");
+  }
+
+  function closeSidebar() {
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+  }
+
+  if(menuToggle) {
+      menuToggle.addEventListener("click", toggleSidebar);
+  }
+
+  if(sidebarOverlay) {
+      sidebarOverlay.addEventListener("click", closeSidebar);
+  }
+
+  // Close sidebar when a nav item is clicked (Mobile UX)
+  document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", () => {
+          if(window.innerWidth <= 992) {
+              closeSidebar();
+          }
+      });
+  });
+
+});
               
               // Record for Recipient (Credit)
               const recipientTxRef = db.collection("transactions").doc();
