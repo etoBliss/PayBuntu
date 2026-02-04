@@ -141,11 +141,11 @@ signupForm.addEventListener("submit", async (e) => {
 
     // Send verification email
     await user.sendEmailVerification({
-      url: window.location.origin + "/public/login.html",
+      url: window.location.origin + "/login.html",
     });
 
     alert("Account created! Please verify your email.");
-    window.location.href = "/public/login.html";
+    window.location.href = "./login.html";
   } catch (error) {
     console.error("Signup error:", error);
     alert(`Signup failed: ${error.message}`);
@@ -175,7 +175,7 @@ googleBtn.addEventListener("click", async (e) => {
       );
     }
 
-    window.location.href = "/public/dashboard.html";
+    window.location.href = "./dashboard.html";
   } catch (error) {
     console.error("Google signup error:", error);
     alert(`Google signup failed: ${error.message}`);
