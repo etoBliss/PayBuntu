@@ -1,200 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paybuntu - Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="styles/dashboard.css" />
-    <link
-      rel="shortcut icon"
-      href="./assets/images/favicon/android-chrome-512x512.png"
-      type="image/x-icon"
-    />
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-  </head>
-  <body>
-    <div class="dashboard-container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="brand">
-          <div class="brand-icon">
-            <i class="fas fa-university"></i>
-          </div>
-          <div class="brand-name">Paybuntu</div>
-        </div>
 
-        <div class="nav-item active">
-          <i class="fas fa-home"></i>
-          <span>Dashboard</span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paybuntu - Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon" />
+  <script src="./scripts/theme.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fas fa-university"></i>
         </div>
-        <div class="nav-item">
-          <i class="fas fa-exchange-alt"></i>
-          <span>Transfer Money</span>
-        </div>
-        <div class="nav-item">
-          <i class="fas fa-wallet"></i>
-          <span>Accounts</span>
-        </div>
-        <div class="nav-item">
-          <i class="fas fa-history"></i>
-          <span>Transaction History</span>
-        </div>
-        <div class="nav-item">
-          <i class="fas fa-credit-card"></i>
-          <span>Cards</span>
-        </div>
-        <div class="nav-item">
-          <i class="fas fa-cog"></i>
-          <span>Settings</span>
-        </div>
-        <div class="nav-item">
-          <i class="fas fa-question-circle"></i>
-          <span>Help & Support</span>
-        </div>
+        <div class="brand-name">Paybuntu</div>
       </div>
 
-      <!-- Main Content -->
-      <div class="main-content">
-        <div class="header">
-          <div class="user-info">
-            <div class="user-avatar" id="userAvatar">PB</div>
-            <div class="welcome-text">
-              <h2 id="welcomeMessage">
-                <i class="fas fa-spinner fa-spin"></i>
-              </h2>
-              <p>Here's your financial summary</p>
-            </div>
-          </div>
-          <div class="actions">
-            <div class="date-display">
-              <i class="far fa-calendar-alt"></i> <span id="currentDate"></span>
-            </div>
-            <button class="btn btn-outline">
-              <i class="fas fa-bell"></i>
-            </button>
-            <button class="btn btn-outline" id="logoutBtn">
-              <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-          </div>
-        </div>
-
-        <!-- Account Overview -->
-        <div class="account-overview">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Account Balance</div>
-              <div class="card-icon balance-icon">
-                <i class="fas fa-wallet"></i>
-              </div>
-            </div>
-            <div class="balance-amount" id="balanceAmount">
-              NGN <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <div class="account-info">
-              <div class="info-item">
-                <div class="info-label">Income</div>
-                <div class="info-value">NGN0.00</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Expenses</div>
-                <div class="info-value">NGN0.00</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Account Details</div>
-              <div class="card-icon account-icon">
-                <i class="fas fa-credit-card"></i>
-              </div>
-            </div>
-            <div class="account-number" id="accountNumber">
-              **** **** **** ****
-            </div>
-            <div class="account-info">
-              <div class="info-item">
-                <div class="info-label">Account Type</div>
-                <div class="info-value">Premium Savings</div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Routing No.</div>
-                <div class="info-value">021000021</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">Personal Information</div>
-              <div class="card-icon user-icon">
-                <i class="fas fa-user"></i>
-              </div>
-            </div>
-            <div class="user-name" id="userName">
-              Loading <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <div class="user-email" id="userEmail">
-              Checking email <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <div class="account-info">
-              <div class="info-item">
-                <div class="info-label">Member Since</div>
-                <div class="info-value" id="memberSince">
-                  Loading <i class="fas fa-spinner fa-spin"></i>
-                </div>
-              </div>
-              <div class="info-item">
-                <div class="info-label">Last Login</div>
-                <div class="info-value">Today</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <div class="action-card">
-            <div class="action-icon transfer-icon">
-              <i class="fas fa-exchange-alt"></i>
-            </div>
-            <div class="action-title">Transfer</div>
-            <div class="action-desc">Send money to accounts</div>
-          </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div class="section-header">
-          <h2 class="section-title">Recent Transactions</h2>
-          <a href="#" class="view-all"
-            >View All <i class="fas fa-arrow-right"></i
-          ></a>
-        </div>
-
-        <table class="transactions-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="transactionsBody">
-            <!-- Transactions will be populated by JavaScript -->
-          </tbody>
-        </table>
+      <div class="nav-item active">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Transfer Money</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-wallet"></i>
+        <span>Accounts</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-history"></i>
+        <span>Transaction History</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-credit-card"></i>
+        <span>Cards</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </div>
+      <div class="nav-item">
+        <i class="fas fa-question-circle"></i>
+        <span>Help & Support</span>
       </div>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">PB</div>
+          <div class="welcome-text">
+            <h2 id="welcomeMessage">
+              <i class="fas fa-spinner fa-spin"></i>
+            </h2>
+            <p>Here's your financial summary</p>
+          </div>
+        </div>
+        <div class="actions">
+          <div class="date-display">
+            <i class="far fa-calendar-alt"></i> <span id="currentDate"></span>
+          </div>
+          <button class="btn btn-outline">
+            <i class="fas fa-bell"></i>
+          </button>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button class="btn btn-outline" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </div>
 
-    <script src="scripts/dashboard.js"></script>
-  </body>
+      <!-- Account Overview -->
+      <div class="account-overview">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Account Balance</div>
+            <div class="card-icon balance-icon">
+              <i class="fas fa-wallet"></i>
+            </div>
+          </div>
+          <div class="balance-amount" id="balanceAmount">
+            NGN <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <div class="account-info">
+            <div class="info-item">
+              <div class="info-label">Income</div>
+              <div class="info-value">NGN0.00</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Expenses</div>
+              <div class="info-value">NGN0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Account Details</div>
+            <div class="card-icon account-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+          </div>
+          <div class="account-number" id="accountNumber">
+            **** **** **** ****
+          </div>
+          <div class="account-info">
+            <div class="info-item">
+              <div class="info-label">Account Type</div>
+              <div class="info-value">Premium Savings</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Routing No.</div>
+              <div class="info-value">021000021</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Personal Information</div>
+            <div class="card-icon user-icon">
+              <i class="fas fa-user"></i>
+            </div>
+          </div>
+          <div class="user-name" id="userName">
+            Loading <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <div class="user-email" id="userEmail">
+            Checking email <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <div class="account-info">
+            <div class="info-item">
+              <div class="info-label">Member Since</div>
+              <div class="info-value" id="memberSince">
+                Loading <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Last Login</div>
+              <div class="info-value">Today</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <div class="action-card">
+          <div class="action-icon transfer-icon">
+            <i class="fas fa-exchange-alt"></i>
+          </div>
+          <div class="action-title">Transfer</div>
+          <div class="action-desc">Send money to accounts</div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="section-header">
+        <h2 class="section-title">Recent Transactions</h2>
+        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <table class="transactions-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="transactionsBody">
+          <!-- Transactions will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+
+  <script src="scripts/dashboard.js"></script>
+</body>
+
 </html>

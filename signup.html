@@ -1,161 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paybuntu - Sign Up</title>
-    <link rel="stylesheet" href="./styles/auth/signup.css" />
-    <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon">
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility,visibility_off"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
-      rel="stylesheet"
-    />
 
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-  </head>
-  <body>
-    <div id="auth-container">
-      <div id="form-head">
-        <span id="big-txt">Let's get started</span>
-        <span>Bank together. Thrive forever.</span>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paybuntu - Sign Up</title>
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="./styles/main/index.css" />
+  <!-- Auth Specific Styles -->
+  <link rel="stylesheet" href="./styles/auth/auth.css" />
+  <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility,visibility_off" />
 
-      <div id="auth-form">
-        <form id="signupForm">
-          <input type="text" id="firstName" placeholder="First Name" />
-          <input type="text" id="lastName" placeholder="Last Name" />
-          <input type="email" id="email" placeholder="Email" />
-          <div class="passVisibility">
-            <input
-              type="password"
-              placeholder="Password"
-              required
-              oninput="testPassword()"
-              id="password"
-            />
-            <button
-              type="button"
-              onclick="showPassword('password', 'visibility1')"
-              id="visibility1"
-            ></button>
-          </div>
-          <small id="error"> </small>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script src="./scripts/theme.js" defer></script>
+</head>
 
-          <div class="passVisibility cp">
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              required
-              id="confirmPassword"
-              oninput="passMatch()"
-            />
-            <button
-              type="button"
-              onclick="showPassword('confirmPassword', 'visibility2')"
-              id="visibility2"
-            ></button>
-          </div>
-          <small id="matchMessage"></small>
+<body>
+  <!-- Theme Toggle -->
+  <button id="theme-toggle" class="theme-toggle-fixed" aria-label="Toggle Dark Mode">
+    🌗
+  </button>
 
-          <button type="submit" id="signUp">Sign Up</button>
-        </form>
-
-        <div class="divider">Or signup with</div>
-
-        <!-- Auth social -->
-        <div id="auth-socials">
-          <button id="googleBtn">
-            <img src="./assets/images/google-icon.png" alt="" width="20rem" />
-          </button>
-        </div>
-        <span id="foot-txt"
-          >Already have an account? <a href="./login.html">Login Here</a></span
-        >
-      </div>
-
+  <div id="auth-container">
+    <div id="form-head">
+      <span id="big-txt">Let's get started</span>
+      <span>Bank together. Thrive forever.</span>
     </div>
 
-    <script src="./scripts/signup.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById(
-          "visibility1"
-        ).innerHTML = `<span class="material-symbols-outlined">visibility_off</span>`;
-        document.getElementById(
-          "visibility2"
-        ).innerHTML = `<span class="material-symbols-outlined">visibility_off</span>`;
-      });
+    <div id="auth-form">
+      <form id="signupForm">
+        <input type="text" id="firstName" placeholder="First Name" required />
+        <input type="text" id="lastName" placeholder="Last Name" required />
+        <input type="email" id="email" placeholder="Email" required autocomplete="email" />
 
-      function showPassword(inputId, btnId) {
-        let passwordInput = document.getElementById(inputId);
-        let visibilityBtn = document.getElementById(btnId);
-        if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-          visibilityBtn.innerHTML = `<span class="material-symbols-outlined">visibility</span>`;
-        } else {
-          passwordInput.type = "password";
-          visibilityBtn.innerHTML = `<span class="material-symbols-outlined">visibility_off</span>`;
-        }
+        <div class="passVisibility">
+          <input type="password" placeholder="Password" required oninput="testPassword()" id="password"
+            autocomplete="new-password" />
+          <button type="button" onclick="showPassword('password', 'visibility1')" id="visibility1"
+            aria-label="Show password">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <small id="error"> </small>
+
+        <div class="passVisibility cp">
+          <input type="password" placeholder="Confirm Password" required id="confirmPassword" oninput="passMatch()"
+            autocomplete="new-password" />
+          <button type="button" onclick="showPassword('confirmPassword', 'visibility2')" id="visibility2"
+            aria-label="Show password">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <small id="matchMessage"></small>
+
+        <button type="submit" id="signUp">Sign Up</button>
+      </form>
+
+      <div class="divider">Or signup with</div>
+
+      <!-- Auth social -->
+      <div id="auth-socials">
+        <button id="googleBtn">
+          <img src="./assets/images/google-icon.png" alt="Google" width="24" />
+        </button>
+      </div>
+      <span id="foot-txt">Already have an account? <a href="./login.html">Login Here</a></span>
+    </div>
+
+  </div>
+
+  <!-- Consolidated auth helpers -->
+  <script>
+    function showPassword(inputId, btnId) {
+      let passwordInput = document.getElementById(inputId);
+      let visibilityBtn = document.getElementById(btnId);
+      let icon = visibilityBtn.querySelector('span');
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.textContent = "visibility";
+      } else {
+        passwordInput.type = "password";
+        icon.textContent = "visibility_off";
+      }
+    }
+
+    function passMatch() {
+      var password = document.getElementById("password").value.trim();
+      var confirmPassword = document.getElementById("confirmPassword").value.trim();
+      var match = document.getElementById("matchMessage");
+
+      if (!confirmPassword) {
+        match.innerHTML = "";
+        return;
       }
 
-      function passMatch() {
-        var password = document.getElementById("password").value.trim();
-        var confirmPassword = document
-          .getElementById("confirmPassword")
-          .value.trim();
-        var match = document.getElementById("matchMessage");
+      if (password === confirmPassword) {
+        match.innerHTML = `Passwords match`;
+        match.style.color = "var(--primary, green)"; // Use CSS var
+      } else {
+        match.innerHTML = `Passwords do not match`;
+        match.style.color = "var(--danger, red)"; // Use CSS var
+      }
+    }
 
-        if (!confirmPassword) {
-          match.innerHTML = "";
-          return;
-        }
+    function testPassword() {
+      let passwordInput = document.getElementById("password");
+      let error = document.getElementById("error");
+      // Using var from theme or inline color
+      // ideally these should return classes instead of setting style.color
+      let strongPasswordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^\w ])\S{8,20}$/;
+      let capsPattern = /[A-Z]/;
+      let lowerCasePattern = /[a-z]/;
+      let numberPattern = /[0-9]/;
+      let symbolPattern = /[^\w ]/;
 
-        if (password === confirmPassword) {
-          match.innerHTML = `Passwords match`;
-          match.style.color = `green`;
+      const val = passwordInput.value.trim();
+
+      if (strongPasswordPattern.test(val)) {
+        error.style.color = "var(--primary, green)";
+        error.innerHTML = "Strong password";
+      } else {
+        error.style.color = "var(--danger, red)";
+        if (!capsPattern.test(val)) {
+          error.innerHTML = "Add at least one capital letter";
+        } else if (!lowerCasePattern.test(val)) {
+          error.innerHTML = "Add at least one lowercase letter";
+        } else if (!numberPattern.test(val)) {
+          error.innerHTML = "Add at least one number";
+        } else if (!symbolPattern.test(val)) {
+          error.innerHTML = "Add at least one symbol";
         } else {
-          match.innerHTML = `Passwords do not match`;
-          match.style.color = `red`;
+          error.innerHTML = "Must be at least 8 characters";
         }
       }
+    }
+  </script>
+  <script src="./scripts/signup.js"></script>
+</body>
 
-      function testPassword() {
-        let passwordInput = document.getElementById("password");
-        let error = document.getElementById("error");
-        let strongPasswordPattern =
-          /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^\w ])\S{8,20}$/;
-        let capsPattern = /[A-Z]/;
-        let lowerCasePattern = /[a-z]/;
-        let numberPattern = /[0-9]/;
-        let symbolPattern = /[^\w ]/;
-
-        if (strongPasswordPattern.test(passwordInput.value.trim())) {
-          error.style.color = "green";
-          error.innerHTML = "strong password";
-        } else {
-          error.style.color = "red";
-          if (!capsPattern.test(passwordInput.value.trim())) {
-            error.innerHTML =
-              "not a strong password, add at least one capital letter";
-          } else if (!lowerCasePattern.test(passwordInput.value.trim())) {
-            error.innerHTML =
-              "not a strong password,add at least one lowercase letter";
-          } else if (!numberPattern.test(passwordInput.value.trim())) {
-            error.innerHTML = "not a strong password,add at least one number";
-          } else if (!symbolPattern.test(passwordInput.value.trim())) {
-            error.innerHTML = "not a strong password, add at least one symbol";
-          } else {
-            error.innerHTML =
-              "not a strong password, ensure its at least 8 characters";
-          }
-        }
-      }
-    </script>
-  </body>
 </html>

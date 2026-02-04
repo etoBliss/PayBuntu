@@ -1,0 +1,233 @@
+/* Paybuntu Auth Styles */
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: radial-gradient(circle at top right, rgba(46, 220, 91, 0.15), transparent 50%),
+                radial-gradient(circle at bottom left, rgba(46, 220, 91, 0.1), transparent 50%),
+                var(--bg-body);
+}
+
+#auth-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+#form-head {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-main);
+}
+
+#big-txt {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#auth-form {
+    background: var(--bg-surface);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    height: 3.5rem;
+    padding: 0 1.25rem;
+    background-color: var(--bg-body);
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    color: var(--text-main);
+    transition: var(--transition);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: var(--bg-surface);
+    box-shadow: 0 0 0 4px rgba(46, 220, 91, 0.1);
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Password Visibility Wrapper */
+.passVisibility {
+    position: relative;
+    width: 100%;
+}
+
+.passVisibility input {
+    width: 100%;
+    padding-right: 3rem;
+}
+
+.passVisibility button {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.passVisibility button:hover {
+    color: var(--primary);
+}
+
+/* Links & Text */
+small {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: right;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+small:hover {
+    color: var(--primary);
+}
+
+/* Submit Button */
+button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(46, 220, 91, 0.2);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 220, 91, 0.3);
+}
+
+/* Divider */
+.divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    position: relative;
+}
+
+.divider::before, .divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background-color: var(--text-muted);
+    opacity: 0.2;
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* Social Buttons */
+#auth-socials button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border); /* Need to ensure var(--border) exists or use fallback */
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#auth-socials button:hover {
+    background-color: var(--bg-body);
+    border-color: var(--text-muted);
+}
+
+/* Footer Text */
+#foot-txt {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+#foot-txt a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+#foot-txt a:hover {
+    text-decoration: underline;
+}
+
+/* Validation Messages */
+#error, #matchMessage {
+    text-align: left;
+    margin-top: 0.5rem;
+}
+
+/* Theme Toggle Position */
+.theme-toggle-fixed {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: var(--bg-surface);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: var(--box-shadow);
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.theme-toggle-fixed:hover {
+    transform: rotate(15deg) scale(1.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

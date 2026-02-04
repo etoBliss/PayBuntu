@@ -1,70 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paybuntu - Sign Up</title>
-    <link rel="stylesheet" href="./styles/auth/login.css" />
-    <link
-      rel="shortcut icon"
-      href="./assets/images/favicon/android-chrome-512x512.png"
-      type="image/x-icon"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility,visibility_off"
-    />
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
-  </head>
-  <body>
-    <div id="auth-container">
-      <div id="form-head">
-        <span id="big-txt">Welcome Back!</span>
-        <span>Login to access your account</span>
-      </div>
 
-      <div id="auth-form">
-        <form id="loginForm">
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-          />
-          <div class="passVisibility">
-            <input
-              type="password"
-              placeholder="Enter your password"
-              required
-              id="password"
-            />
-            <button
-              type="button"
-              onclick="showPassword('password', 'visibility1')"
-              id="visibilityToggle"
-            ></button>
-          </div>
-          <small id="forgotPassword">Forgot Password</small>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paybuntu - Login</title>
+  <!-- Core Design System -->
+  <link rel="stylesheet" href="./styles/main/index.css" />
+  <!-- Auth Specific Styles -->
+  <link rel="stylesheet" href="./styles/auth/auth.css" />
+  <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=visibility,visibility_off" />
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+  <script src="./scripts/theme.js" defer></script>
+</head>
 
-          <button type="submit" id="loginBtn">Login</button>
-        </form>
+<body>
+  <!-- Theme Toggle -->
+  <button id="theme-toggle" class="theme-toggle-fixed" aria-label="Toggle Dark Mode">
+    🌗
+  </button>
 
-        <div class="divider">Or Login with</div>
-
-        <!-- Auth social -->
-        <div id="auth-socials">
-          <button id="googleLoginBtn">
-            <img src="./assets/images/google-icon.png" alt="" width="20rem" />
-          </button>
-        </div>
-        <span id="foot-txt"
-          >Don't have an account? <a href="./signup.html">Singup Here</a></span
-        >
-      </div>
+  <div id="auth-container">
+    <div id="form-head">
+      <span id="big-txt">Welcome Back!</span>
+      <span>Login to access your account</span>
     </div>
 
-    <script src="scripts/login.js"></script>
-  </body>
+    <div id="auth-form">
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="Enter your email" required autocomplete="email" />
+        <div class="passVisibility">
+          <input type="password" placeholder="Enter your password" required id="password"
+            autocomplete="current-password" />
+          <button type="button" onclick="showPassword('password', 'visibilityToggle')" id="visibilityToggle"
+            aria-label="Show password">
+            <span class="material-symbols-outlined">visibility_off</span>
+          </button>
+        </div>
+        <small id="forgotPassword">Forgot Password</small>
+
+        <button type="submit" id="loginBtn">Login</button>
+      </form>
+
+      <div class="divider">Or Login with</div>
+
+      <!-- Auth social -->
+      <div id="auth-socials">
+        <button id="googleLoginBtn">
+          <img src="./assets/images/google-icon.png" alt="Google" width="24" />
+        </button>
+      </div>
+      <span id="foot-txt">Don't have an account? <a href="./signup.html">Sign Up Here</a></span>
+    </div>
+  </div>
+
+  <!-- Script to handle password visibility toggle locally if not in login.js -->
+  <script>
+    function showPassword(inputId, btnId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      const icon = btn.querySelector('span');
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "visibility";
+      } else {
+        input.type = "password";
+        icon.textContent = "visibility_off";
+      }
+    }
+  </script>
+  <script src="scripts/login.js"></script>
+</body>
+
 </html>

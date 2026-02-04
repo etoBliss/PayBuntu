@@ -92,8 +92,33 @@ function fetchTransactions(userId) {
   // In a real app, you would fetch from Firestore
   // For now, we'll simulate some transactions
   const transactions = [
-    //
-    //
+    {
+        id: 1,
+        type: 'income',
+        description: 'Salary Deposit',
+        from: 'Paybuntu Inc',
+        amount: 250000,
+        date: new Date().toISOString(),
+        status: 'completed'
+    },
+    {
+        id: 2,
+        type: 'expense',
+        description: 'Netflix Subscription',
+        to: 'Netflix',
+        amount: -4500,
+        date: new Date(Date.now() - 86400000).toISOString(),
+        status: 'completed'
+    },
+    {
+        id: 3,
+        type: 'transfer',
+        description: 'Transfer to John',
+        to: 'John Doe',
+        amount: -15000,
+        date: new Date(Date.now() - 172800000).toISOString(),
+        status: 'pending'
+    }
   ];
 
   // Clear existing rows
@@ -104,12 +129,14 @@ function fetchTransactions(userId) {
     const row = document.createElement("tr");
 
     const typeIconClass = `type-${transaction.type}`;
-    const typeIcon =
-      transaction.type === "income"
-        ? "fa-arrow-down"
-        : transaction.type === "expense"
-        ? "fa-home"
-        : "fa-exchange-alt";
+    let typeIcon;
+    
+    switch(transaction.type) {
+        case 'income': typeIcon = 'fa-arrow-down'; break;
+        case 'expense': typeIcon = 'fa-shopping-cart'; break;
+        case 'transfer': typeIcon = 'fa-exchange-alt'; break;
+        default: typeIcon = 'fa-circle';
+    }
 
     const amountClass = transaction.amount > 0 ? "income" : "expense";
 
@@ -120,8 +147,8 @@ function fetchTransactions(userId) {
                 <i class="fas ${typeIcon}"></i>
               </div>
               <div>
-                <div>${transaction.description}</div>
-                <div class="text-light">${
+                <div style="font-weight: 500;">${transaction.description}</div>
+                <div class="text-muted">${
                   transaction.amount > 0 ? "From: " : "To: "
                 }${
       transaction.amount > 0 ? transaction.from : transaction.to

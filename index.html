@@ -1,327 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paybuntu - Digital Banking</title>
-    <link rel="stylesheet" href="./styles/main/index.css" />
-    <link
-      rel="shortcut icon"
-      href="./assets/images/favicon/android-chrome-512x512.png"
-      type="image/x-icon"
-    />
-    <script src="./scripts/index.js"></script>
-  </head>
 
-  <body>
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-      <img
-        src="./assets/logo/paybuntu-logo(splash_screen).png"
-        alt="Paybuntu Logo"
-      />
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paybuntu - Future of Digital Banking</title>
+  <link rel="stylesheet" href="./styles/main/index.css" />
+  <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon" />
+  <script src="./scripts/theme.js" defer></script>
+  <script src="./scripts/index.js" defer></script>
+</head>
 
-    <main id="main-content">
-      <!-- Nav Header -->
-      <nav>
-        <div class="nav-item">
-          <img src="./assets/logo/paybuntu-logo(splash_screen).png" alt="" />
-          <div class="nav-links">
-            <a href="">Home</a>
-            <a href="">About Us</a>
-            <a href="https://etobliss.vercel.app/" class="nav-link"
-              >Developer</a
-            >
-          </div>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <img src="./assets/logo/paybuntu-logo(splash_screen).png" alt="Paybuntu Logo" />
+  </div>
+
+  <main id="main-content">
+    <!-- Nav Header -->
+    <nav class="glass">
+      <div class="nav-item">
+        <img src="./assets/logo/paybuntu-logo(splash_screen).png" alt="Paybuntu" />
+        <div class="nav-links">
+          <a href="#" class="active">Home</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="https://etobliss.vercel.app/" target="_blank">Developer</a>
+        </div>
+      </div>
+
+      <div class="nav-btn">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+          🌗
+        </button>
+        <a href="./login.html" class="btn btn-login">Login</a>
+        <a href="./signup.html" class="btn btn-alt">Get Started</a>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-sec">
+        <div class="hero-text">
+          <h2>Banking made simple.<br>Powerfully simple.</h2>
+          <p>
+            Send and receive money instantly, enjoy a free ₦25,000 welcome bonus,
+            and manage your finances with a premium experience.
+          </p>
+          <ul class="hero-features">
+            <li>Instant Transfers</li>
+            <li>Real-time Notifications</li>
+            <li>Zero Maintenance Fees</li>
+          </ul>
+          <a href="./signup.html" class="btn btn-alt">Open Free Account</a>
         </div>
 
-        <div class="nav-btn">
-          <a href="./login.html" class="btn btn-login">Login</a>
-          <a href="./signup.html" class="btn btn-alt">Get Started</a>
+        <div class="hero-visual">
+          <div class="feature-card">
+            <img src="./assets/images/imgi_12_slideImgMob2.png" alt="Transfer">
+            <span>Fast</span>
+          </div>
+          <div class="feature-card">
+            <img src="./assets/images/imgi_16_slideImgMob3.png" alt="Secure">
+            <span>Secure</span>
+          </div>
+          <div class="feature-card">
+            <img src="./assets/images/imgi_20_slideImgMob4.png" alt="Savings">
+            <span>Grow</span>
+          </div>
+          <div class="feature-card">
+            <img src="./assets/images/imgi_24_slideImgMob5.png" alt="Bills">
+            <span>Pay</span>
+          </div>
         </div>
-      </nav>
+      </div>
+    </section>
 
-      <section class="hero">
-        <div class="hero-sec">
-          <div class="hero-sec1">
-            <div class="hero-boxs">
-              <div class="hero-box">
-                <h2>Banking made simple with Paybuntu</h2>
-              </div>
-              <div class="hero-box bx2">
-                <span
-                  >Send and receive money instantly, enjoy a free ₦25,000
-                  welcome bonus, and manage your finances without stress.</span
-                >
-                <ul>
-                  <li>Free transfers between Paybuntu users</li>
-                  <li>Real-time balance updates</li>
-                  <li>Secure, fast & easy</li>
-                </ul>
+    <!-- Content Block 1 -->
+    <section id="services" class="content-block">
+      <div class="content-text">
+        <h2>Fund Your Wallet, Transfer Anytime</h2>
+        <p>
+          Banking doesn’t have to be stressful or slow. With Paybuntu, you can
+          add money to your wallet in seconds, move funds between friends and
+          family without worrying about hidden charges, and settle your
+          everyday bills like electricity, TV, and data with just a few taps.
+        </p>
+      </div>
+      <div class="content-image">
+        <img src="./assets/images/imgi_31_OurServices01.jpg" alt="Seamless Banking" />
+      </div>
+    </section>
 
-                <button class="btn btn-alt">Get Started</button>
-              </div>
-            </div>
-            <div class="hero-box2">
-              <div class="hb">
-                <img
-                  src="./assets/images/imgi_12_slideImgMob2.png"
-                  alt=""
-                  width="150"
-                />
-              </div>
-              <div class="hb">
-                <img
-                  src="./assets/images/imgi_16_slideImgMob3.png"
-                  alt=""
-                  width="150"
-                />
-              </div>
-              <div class="hb">
-                <img
-                  src="./assets/images/imgi_20_slideImgMob4.png"
-                  alt=""
-                  width="150"
-                />
-              </div>
-              <div class="hb">
-                <img
-                  src="./assets/images/imgi_24_slideImgMob5.png"
-                  alt=""
-                  width="150"
-                />
-              </div>
-            </div>
-          </div>
-          <div class="hero-sec2"></div>
-        </div>
-      </section>
+    <!-- Content Block 2 -->
+    <section class="content-block reverse">
+      <div class="content-text">
+        <h2>Save Money Without Stress</h2>
+        <p>
+          We know saving money can feel tough, but Paybuntu makes it simple.
+          You can start small, set aside little amounts at your own pace, and
+          watch it grow safely over time. No complex banking terms, no hidden
+          conditions.
+        </p>
+      </div>
+      <div class="content-image">
+        <img src="./assets/images/imgi_34_OurServices02.jpg" alt="Smart Savings" />
+      </div>
+    </section>
 
-      <section id="container">
-        <div class="cont-txt">
-          <h2>Fund Your Wallet, Transfer Anytime, Pay Bills Easily</h2>
-          <span>
-            Banking doesn’t have to be stressful or slow. With Paybuntu, you can
-            add money to your wallet in seconds, move funds between friends and
-            family without worrying about hidden charges, and settle your
-            everyday bills like electricity, TV, and data with just a few taps.
-            Everything you need for smooth daily living is right inside one
-            simple app.</span
-          >
-        </div>
-        <div class="cont-img">
-          <img
-            src="./assets/images/imgi_31_OurServices01.jpg"
-            alt=""
-            width="100%"
-          />
-        </div>
-      </section>
+    <!-- Content Block 3 -->
+    <section class="content-block">
+      <div class="content-text">
+        <h2>Earn Rewards While You Spend</h2>
+        <p>
+          With Paybuntu, your everyday banking becomes an opportunity to earn.
+          From a welcome bonus the moment you sign up, to rewards on referrals
+          and tasks you complete within the app, you’re not just spending or
+          saving—you’re gaining value back.
+        </p>
+      </div>
+      <div class="content-image">
+        <img src="./assets/images/imgi_37_OurServices03.jpg" alt="Rewards" />
+      </div>
+    </section>
 
-      <section id="container1">
-        <div class="cont1-img">
-          <img
-            src="./assets/images/imgi_34_OurServices02.jpg"
-            alt=""
-            width="100%"
-          />
+    <!-- Footer -->
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Paybuntu</h4>
+          <a href="#">About Us</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+          <a href="#">Blog</a>
         </div>
-        <div class="cont1-txt">
-          <h2>Save Money Without Stress, Grow It With Ease</h2>
-          <span>
-            We know saving money can feel tough, but Paybuntu makes it simple.
-            You can start small, set aside little amounts at your own pace, and
-            watch it grow safely over time. No complex banking terms, no hidden
-            conditions, just a straightforward way to secure your future and
-            build habits that give you financial peace of mind. Saving is no
-            longer something far away; it’s something you can enjoy today.</span
-          >
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="#">Personal Banking</a>
+          <a href="#">Business Banking</a>
+          <a href="#">Cards</a>
+          <a href="#">Savings</a>
         </div>
-      </section>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Security</a>
+          <a href="#">Fees</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 3rem; color: var(--text-muted);">
+        &copy; 2026 Paybuntu. All rights reserved.
+      </div>
+    </footer>
+  </main>
+</body>
 
-      <section id="container">
-        <div class="cont-txt">
-          <h2>Earn Real Rewards While Using Paybuntu</h2>
-          <span>
-            With Paybuntu, your everyday banking becomes an opportunity to earn.
-            From a welcome bonus the moment you sign up, to rewards on referrals
-            and tasks you complete within the app, you’re not just spending or
-            saving, you’re gaining value back. Every transaction adds up to
-            something bigger, giving you more reasons to enjoy and stick with
-            the app. The more you use Paybuntu, the more your wallet thanks
-            you.</span
-          >
-        </div>
-        <div class="cont-img">
-          <img
-            src="./assets/images/imgi_37_OurServices03.jpg"
-            alt=""
-            width="100%"
-          />
-        </div>
-      </section>
-
-      <footer>
-        <div class="fcontent">
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-          <div class="cont1">
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-            <span>Lorem</span>
-          </div>
-        </div>
-      </footer>
-    </main>
-  </body>
 </html>
