@@ -290,6 +290,62 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+  // Transfer User Verification Logic
+  const recipientInput = document.getElementById("recipientInput");
+  const feedbackBox = document.querySelector(".recipient-check");
+  let verifiedRecipient = null;
+  let searchTimeout = null;
+
+  recipientInput.addEventListener("input", function() {
+      clearTimeout(searchTimeout);
+      const val = this.value.trim();
+      verifiedRecipient = null;
+      feedbackBox.className = "recipient-check";
+      feedbackBox.textContent = "";
+      
+      if(val.length < 5) return;
+
+      feedbackBox.textContent = "Searching user...";
+      feedbackBox.classList.add("check-loading");
+
+      searchTimeout = setTimeout(() => verifyUser(val), 800);
+  });
+
+  async function verifyUser(query) {
+      try {
+          // Check if searching self
+          if(auth.currentUser.email === query) {
+              throw new Error("You cannot send money to yourself.");
+          }
+
+          let userQuery;
+          // Determine if email or account number
+          if(query.includes("@")) {
+              userQuery = db.collection("users").where("email", "==", query);
+          } else {
+              // Assume account number search
+              userQuery = db.collection("users").where("accountNumber", "==", query); 
+          }
+
+          const snapshot = await userQuery.limit(1).get();
+          
+          if(snapshot.empty) {
+              throw new Error("User not found.");
+          }
+
+          const userDoc = snapshot.docs[0];
+          verifiedRecipient = { id: userDoc.id, ...userDoc.data() };
+          
+          feedbackBox.className = "recipient-check check-success";
+          feedbackBox.innerHTML = `<i class="fas fa-check-circle"></i> Found: <b>${verifiedRecipient.firstName} ${verifiedRecipient.lastName}</b>`;
+
+      } catch (e) {
+          feedbackBox.className = "recipient-check check-error";
+          feedbackBox.innerHTML = `<i class="fas fa-times-circle"></i> ${e.message}`;
+          verifiedRecipient = null;
+      }
+  }
+
   // Transfer Logic Submit
   document.getElementById("transferForm").addEventListener("submit", async(e) => {
       e.preventDefault();
