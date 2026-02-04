@@ -1090,3 +1090,33 @@ input:checked + .slider:before {
         grid-template-columns: 1fr;
     }
 }
+
+/* FAQ Styles */
+.faq-list {
+    margin-top: 15px;
+}
+
+.faq-item {
+    padding: 15px;
+    background: var(--bg-body);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+}
+
+.faq-item h4 {
+    margin-bottom: 5px;
+    color: var(--text-main);
+    font-size: 15px;
+}
+
+.faq-item p {
+    font-size: 13px;
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .faq-item {
+        padding: 12px;
+    }
+}
