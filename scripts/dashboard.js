@@ -382,5 +382,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
   });
 
-  // ... (Nav Logic) ...
+  // Add navigation functionality (SPA Routing)
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    item.addEventListener("click", function () {
+      const targetId = this.getAttribute("data-target");
+      if (!targetId) return;
+
+      // Update Active Nav
+      document
+        .querySelectorAll(".nav-item")
+        .forEach((i) => i.classList.remove("active"));
+      this.classList.add("active");
+
+      // Update Active View
+      document.querySelectorAll(".view-section").forEach((view) => {
+        view.classList.add("hidden");
+      });
+      document.getElementById(targetId).classList.remove("hidden");
+    });
+  });
 });
