@@ -41,7 +41,7 @@
         <i class="fas fa-cog"></i>
         <span>Settings</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-target="view-support">
         <i class="fas fa-question-circle"></i>
         <span>Help & Support</span>
       </div>
@@ -289,88 +289,52 @@
       </div>
     </div>
 
-    <!-- Settings View -->
-    <div id="view-settings" class="view-section hidden fade-in">
+    <!-- Support View -->
+    <div id="view-support" class="view-section hidden fade-in">
       <div class="section-header">
-        <h2 class="section-title">Settings</h2>
+        <h2 class="section-title">Help & Support</h2>
       </div>
 
-      <div class="settings-grid">
-        <!-- Profile Settings -->
-        <div class="card">
+      <div class="account-overview">
+        <div class="card clickable-card" onclick="alert('Live Chat connecting...')">
           <div class="card-header">
-            <div class="card-title">Profile Settings</div>
-            <div class="card-icon account-icon"><i class="fas fa-user-edit"></i></div>
+            <div class="card-title">Live Chat</div>
+            <div class="card-icon" style="background: rgba(46, 220, 91, 0.1); color: var(--primary);"><i
+                class="fas fa-comments"></i></div>
           </div>
-
-          <div class="profile-upload-section">
-            <div class="profile-upload-avatar">
-              <span id="settingsAvatar">PB</span>
-              <div class="edit-avatar-btn" onclick="document.getElementById('avatarUpload').click()">
-                <i class="fas fa-camera"></i>
-              </div>
-            </div>
-            <input type="file" id="avatarUpload" hidden accept="image/*">
-            <p class="text-muted" style="margin-top: 10px; font-size: 13px;">Click to upload new photo</p>
-          </div>
-
-          <form id="profileForm" style="margin-top: 20px;">
-            <div class="form-group">
-              <label class="form-label">Full Name</label>
-              <div style="display: flex; gap: 10px;">
-                <input type="text" class="form-input" id="settingFirstName" placeholder="First Name">
-                <input type="text" class="form-input" id="settingLastName" placeholder="Last Name">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Email Address</label>
-              <input type="email" class="form-input" id="settingEmail" placeholder="user@example.com">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Phone</label>
-              <input type="tel" class="form-input" id="settingPhone" placeholder="+234...">
-            </div>
-            <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save Changes</button>
-          </form>
+          <p class="text-muted">Chat with our support team 24/7 for instant assistance.</p>
         </div>
 
-        <!-- Security Settings -->
+        <div class="card clickable-card" onclick="window.location.href='mailto:support@paybuntu.com'">
+          <div class="card-header">
+            <div class="card-title">Email Support</div>
+            <div class="card-icon" style="background: rgba(52, 168, 83, 0.1); color: var(--accent);"><i
+                class="fas fa-envelope"></i></div>
+          </div>
+          <p class="text-muted">Send us an email and we'll get back to you within 24 hours.</p>
+        </div>
+
         <div class="card">
           <div class="card-header">
-            <div class="card-title">Security</div>
-            <div class="card-icon" style="background: rgba(234, 67, 53, 0.1); color: var(--danger);"><i
-                class="fas fa-shield-alt"></i></div>
+            <div class="card-title">FAQs</div>
+            <div class="card-icon" style="background: rgba(251, 188, 5, 0.1); color: var(--warning);"><i
+                class="fas fa-question"></i></div>
           </div>
 
-          <div class="security-option">
-            <div class="sec-info">
-              <h4>Change Password</h4>
-              <p class="text-muted">Update your login password regularly</p>
+          <div class="faq-list">
+            <div class="faq-item">
+              <h4>How do I reset my password?</h4>
+              <p class="text-muted">Go to Settings > Security > Change Password.</p>
             </div>
-            <button class="btn btn-outline btn-sm">Update</button>
-          </div>
-
-          <div class="security-option">
-            <div class="sec-info">
-              <h4>Two-Factor Authentication</h4>
-              <p class="text-muted">Add an extra layer of security</p>
+            <div class="faq-item" style="margin-top: 15px;">
+              <h4>What is the transfer limit?</h4>
+              <p class="text-muted">Daily limit is NGN 5,000,000 for Premium accounts.</p>
             </div>
-            <label class="switch">
-              <input type="checkbox">
-              <span class="slider round"></span>
-            </label>
-          </div>
-
-          <div class="security-option">
-            <div class="sec-info">
-              <h4>Login History</h4>
-              <p class="text-muted">View your recent login sessions</p>
-            </div>
-            <button class="btn btn-outline btn-sm">View</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
   </div>
   </div>
 
