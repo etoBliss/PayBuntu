@@ -263,10 +263,11 @@ body {
 
 /* Account Overview */
 .account-overview {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  display: block;
+}
+
+.account-overview .card {
+  margin-bottom: 20px;
 }
 
 .card {
@@ -370,7 +371,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 40px 0 20px;
+  margin: 10px 0 20px;
 }
 
 .section-title {
@@ -1085,10 +1086,13 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-@media (max-width: 768px) {
-    .settings-grid {
-        grid-template-columns: 1fr;
-    }
+/* Settings Page Styles */
+.settings-grid {
+    display: block;
+}
+
+.settings-grid .card {
+    margin-bottom: 20px;
 }
 
 /* FAQ Styles */
