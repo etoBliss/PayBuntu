@@ -248,6 +248,14 @@ function printReceipt(tx) {
 }
 
 
+// Set current date
+function setCurrentDate() {
+  const now = new Date();
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const dateEl = document.getElementById("currentDate");
+  if(dateEl) dateEl.textContent = now.toLocaleDateString("en-US", options);
+}
+
 // Initialize the dashboard
 document.addEventListener("DOMContentLoaded", () => {
     // ... (Existing Init Code)
