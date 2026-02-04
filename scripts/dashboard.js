@@ -97,7 +97,59 @@ function updateDashboard(userData) {
       document.getElementById("accInfoEmail").textContent = userData.email || "";
       document.getElementById("accInfoPhone").textContent = userData.phone || "Not Set";
   }
+
+  // Populate Settings Page
+  if(document.getElementById("settingFirstName")) {
+      document.getElementById("settingFirstName").value = userData.firstName || "";
+      document.getElementById("settingLastName").value = userData.lastName || "";
+      document.getElementById("settingEmail").value = userData.email || "";
+      document.getElementById("settingPhone").value = userData.phone || "";
+      document.getElementById("settingsAvatar").textContent = (userData.firstName?.charAt(0) || "") + (userData.lastName?.charAt(0) || "");
+  }
 }
+
+// Settings Profile Update Logic
+document.addEventListener("DOMContentLoaded", () => {
+    const profileForm = document.getElementById("profileForm");
+    if(profileForm) {
+        profileForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("saveProfileBtn");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            const updates = {
+                firstName: document.getElementById("settingFirstName").value,
+                lastName: document.getElementById("settingLastName").value,
+                email: document.getElementById("settingEmail").value,
+                phone: document.getElementById("settingPhone").value
+            };
+
+            try {
+                await db.collection("users").doc(auth.currentUser.uid).update(updates);
+                alert("Profile Updated Successfully!");
+            } catch(err) {
+                console.error(err);
+                alert("Error updating profile: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    }
+
+    // Avatar Upload Simulation
+    const avatarInput = document.getElementById("avatarUpload");
+    if(avatarInput) {
+        avatarInput.addEventListener("change", (e) => {
+             const file = e.target.files[0];
+             if(file) {
+                 alert("Profile picture upload feature coming soon! (File selected: " + file.name + ")");
+             }
+        });
+    }
+});
 
 // Listen for live transactions
 function listenToTransactions(userId) {
