@@ -25,19 +25,19 @@
         <div class="brand-name">Paybuntu</div>
       </div>
 
-      <div class="nav-item active">
+      <div class="nav-item active" data-target="view-dashboard">
         <i class="fas fa-home"></i>
         <span>Dashboard</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-target="view-transfer">
         <i class="fas fa-exchange-alt"></i>
         <span>Transfer Money</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-target="view-dashboard"> <!-- Placeholder for future views -->
         <i class="fas fa-wallet"></i>
         <span>Accounts</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" data-target="view-dashboard">
         <i class="fas fa-history"></i>
         <span>Transaction History</span>
       </div>
@@ -83,110 +83,146 @@
         </div>
       </div>
 
-      <!-- Account Overview -->
-      <div class="account-overview">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Account Balance</div>
-            <div class="card-icon balance-icon">
-              <i class="fas fa-wallet"></i>
-            </div>
-          </div>
-          <div class="balance-amount" id="balanceAmount">
-            NGN <i class="fas fa-spinner fa-spin"></i>
-          </div>
-          <div class="account-info">
-            <div class="info-item">
-              <div class="info-label">Income</div>
-              <div class="info-value">NGN0.00</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">Expenses</div>
-              <div class="info-value">NGN0.00</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Account Details</div>
-            <div class="card-icon account-icon">
-              <i class="fas fa-credit-card"></i>
-            </div>
-          </div>
-          <div class="account-number" id="accountNumber">
-            **** **** **** ****
-          </div>
-          <div class="account-info">
-            <div class="info-item">
-              <div class="info-label">Account Type</div>
-              <div class="info-value">Premium Savings</div>
-            </div>
-            <div class="info-item">
-              <div class="info-label">Routing No.</div>
-              <div class="info-value">021000021</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">Personal Information</div>
-            <div class="card-icon user-icon">
-              <i class="fas fa-user"></i>
-            </div>
-          </div>
-          <div class="user-name" id="userName">
-            Loading <i class="fas fa-spinner fa-spin"></i>
-          </div>
-          <div class="user-email" id="userEmail">
-            Checking email <i class="fas fa-spinner fa-spin"></i>
-          </div>
-          <div class="account-info">
-            <div class="info-item">
-              <div class="info-label">Member Since</div>
-              <div class="info-value" id="memberSince">
-                Loading <i class="fas fa-spinner fa-spin"></i>
+      <!-- Dashboard View -->
+      <div id="view-dashboard" class="view-section fade-in">
+        <!-- Account Overview -->
+        <div class="account-overview">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Account Balance</div>
+              <div class="card-icon balance-icon">
+                <i class="fas fa-wallet"></i>
               </div>
             </div>
-            <div class="info-item">
-              <div class="info-label">Last Login</div>
-              <div class="info-value">Today</div>
+            <div class="balance-amount" id="balanceAmount">
+              NGN <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="account-info">
+              <div class="info-item">
+                <div class="info-label">Income</div>
+                <div class="info-value">NGN0.00</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Expenses</div>
+                <div class="info-value">NGN0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Account Details</div>
+              <div class="card-icon account-icon">
+                <i class="fas fa-credit-card"></i>
+              </div>
+            </div>
+            <div class="account-number" id="accountNumber">
+              **** **** **** ****
+            </div>
+            <div class="account-info">
+              <div class="info-item">
+                <div class="info-label">Account Type</div>
+                <div class="info-value">Premium Savings</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Routing No.</div>
+                <div class="info-value">021000021</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Personal Information</div>
+              <div class="card-icon user-icon">
+                <i class="fas fa-user"></i>
+              </div>
+            </div>
+            <div class="user-name" id="userName">
+              Loading <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="user-email" id="userEmail">
+              Checking email <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="account-info">
+              <div class="info-item">
+                <div class="info-label">Member Since</div>
+                <div class="info-value" id="memberSince">
+                  Loading <i class="fas fa-spinner fa-spin"></i>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Last Login</div>
+                <div class="info-value">Today</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions">
-        <div class="action-card">
-          <div class="action-icon transfer-icon">
-            <i class="fas fa-exchange-alt"></i>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <div class="action-card">
+            <div class="action-icon transfer-icon">
+              <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="action-title">Transfer</div>
+            <div class="action-desc">Send money to accounts</div>
           </div>
-          <div class="action-title">Transfer</div>
-          <div class="action-desc">Send money to accounts</div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="section-header">
+          <h2 class="section-title">Recent Transactions</h2>
+          <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsBody">
+            <!-- Transactions will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div> <!-- End view-dashboard -->
+
+      <!-- Transfer View -->
+      <div id="view-transfer" class="view-section hidden fade-in">
+        <div class="section-header">
+          <h2 class="section-title">Transfer Money</h2>
+        </div>
+
+        <div class="card transfer-container">
+          <form id="transferForm">
+            <div class="form-group">
+              <label class="form-label">Recipient Email or Account Number</label>
+              <input type="text" class="form-input" id="recipientInput"
+                placeholder="Enter recipient's email or PB-XXXXXXXXXX" required>
+              <div id="recipient meaningful-feedback" class="recipient-check"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Amount (NGN)</label>
+              <input type="number" class="form-input" id="transferAmount" placeholder="0.00" min="100" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Note (Optional)</label>
+              <input type="text" class="form-input" id="transferNote" placeholder="What's this for?">
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="sendMoneyBtn"
+              style="width: 100%; justify-content: center;">
+              <i class="fas fa-paper-plane"></i> Send Money
+            </button>
+          </form>
         </div>
       </div>
-
-      <!-- Recent Transactions -->
-      <div class="section-header">
-        <h2 class="section-title">Recent Transactions</h2>
-        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-      </div>
-
-      <table class="transactions-table">
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="transactionsBody">
-          <!-- Transactions will be populated by JavaScript -->
-        </tbody>
-      </table>
     </div>
   </div>
 
