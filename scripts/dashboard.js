@@ -94,7 +94,7 @@ function listenToTransactions(userId) {
   // We will sort client-side instead.
   db.collection("transactions")
     .where("userId", "==", userId)
-    .limit(50)
+    // .limit(50) removed to ensure we get ALL records since we can't sort server-side without index
     .onSnapshot((snapshot) => {
       transactionsBody.innerHTML = "";
       
