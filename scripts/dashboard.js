@@ -55,8 +55,8 @@ function updateDashboard(userData) {
       userData.firstName.charAt(0) + userData.lastName.charAt(0);
   }
 
-  document.getElementById("welcomeMessage").textContent = `Welcome back, ${
-    userData.firstName || "User"
+  document.getElementById("welcomeMessage").textContent = `${
+    userData.firstName + " " + userData.lastName 
   }!`;
 
   document.getElementById("userName").textContent = `${
@@ -82,6 +82,20 @@ function updateDashboard(userData) {
     document.getElementById("memberSince").textContent = formatDate(
       userData.createdAt.toDate()
     );
+  }
+
+  // Populate Account Page
+  const fullName = `${userData.firstName || ""} ${userData.lastName || ""}`;
+  
+  if(document.getElementById("accountPageName")) {
+      document.getElementById("accountPageName").textContent = fullName;
+      document.getElementById("accountPageEmail").textContent = userData.email || "";
+      document.getElementById("accountPageAvatar").textContent = (userData.firstName?.charAt(0) || "") + (userData.lastName?.charAt(0) || "");
+      
+      document.getElementById("accInfoName").textContent = fullName;
+      document.getElementById("accInfoNum").textContent = userData.accountNumber || "N/A";
+      document.getElementById("accInfoEmail").textContent = userData.email || "";
+      document.getElementById("accInfoPhone").textContent = userData.phone || "Not Set";
   }
 }
 
@@ -457,7 +471,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById(targetId).classList.remove("hidden");
     });
   });
-  });
 
   // Mobile Sidebar Toggle Logic
   const menuToggle = document.getElementById("menuToggle");
@@ -490,3 +503,4 @@ document.addEventListener("DOMContentLoaded", () => {
           }
       });
   });
+});

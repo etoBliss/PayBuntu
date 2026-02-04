@@ -33,7 +33,7 @@
         <i class="fas fa-exchange-alt"></i>
         <span>Transfer Money</span>
       </div>
-      <div class="nav-item" data-target="view-dashboard"> <!-- Placeholder for future views -->
+      <div class="nav-item" data-target="view-account">
         <i class="fas fa-wallet"></i>
         <span>Accounts</span>
       </div>
@@ -115,7 +115,7 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card clickable-card" onclick="document.querySelector('[data-target=\'view-account\']').click()">
             <div class="card-header">
               <div class="card-title">Account Details</div>
               <div class="card-icon account-icon">
@@ -166,7 +166,7 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="quick-actions">
+        <!-- <div class="quick-actions">
           <div class="action-card">
             <div class="action-icon transfer-icon">
               <i class="fas fa-exchange-alt"></i>
@@ -174,7 +174,7 @@
             <div class="action-title">Transfer</div>
             <div class="action-desc">Send money to accounts</div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Recent Transactions -->
         <div class="section-header">
@@ -227,6 +227,71 @@
               <i class="fas fa-paper-plane"></i> Send Money
             </button>
           </form>
+        </div>
+      </div>
+
+      <!-- Account View -->
+      <div id="view-account" class="view-section hidden fade-in">
+        <div class="section-header">
+          <h2 class="section-title">My Profile & Account</h2>
+        </div>
+
+        <div class="account-profile-header card">
+          <div class="profile-avatar-large" id="accountPageAvatar">PB</div>
+          <div class="profile-info">
+            <h3 id="accountPageName">Loading...</h3>
+            <p id="accountPageEmail" class="text-muted">loading...</p>
+            <div class="account-badges">
+              <span class="badge badge-success">Verified</span>
+              <span class="badge badge-primary">Premium</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="account-details-grid">
+          <div class="card">
+            <h3>Account Information</h3>
+            <div class="detail-row">
+              <span>Account Name</span>
+              <span id="accInfoName">Loading...</span>
+            </div>
+            <div class="detail-row">
+              <span>Account Number</span>
+              <span id="accInfoNum">**** ****</span>
+            </div>
+            <div class="detail-row">
+              <span>Account Type</span>
+              <span>Premium Savings</span>
+            </div>
+            <div class="detail-row">
+              <span>Routing Number</span>
+              <span>021000021</span>
+            </div>
+            <div class="detail-row">
+              <span>Status</span>
+              <span class="status-completed">Active</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Security & Login</h3>
+            <div class="detail-row">
+              <span>Email Address</span>
+              <span id="accInfoEmail">user@example.com</span>
+            </div>
+            <div class="detail-row">
+              <span>Phone Number</span>
+              <span id="accInfoPhone">Not set</span>
+            </div>
+            <div class="detail-row">
+              <span>Password</span>
+              <span>••••••••••••</span>
+            </div>
+            <div class="detail-row" style="margin-top: 15px;">
+              <button class="btn btn-outline btn-sm">Change Password</button>
+              <button class="btn btn-outline btn-sm">2FA Settings</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
