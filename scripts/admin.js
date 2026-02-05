@@ -23,6 +23,7 @@ const ADMIN_EMAIL = "paybuntu@gmail.com";
 let allUsers = [];
 let allTransactions = [];
 let allLogins = [];
+let allAuditLogs = [];
 let currentRange = '7d';
 
 // Chart Instances
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupFilters();
     setupConfigListeners();
     setupSupportHub();
+    setupAuditLogs();
 });
 
 function setupFilters() {
@@ -260,8 +262,15 @@ async function toggleUserStatus(userId, status) {
     if(!confirmed) return;
     try {
         await db.collection("users").doc(userId).update({ isBlocked: status });
+        
+        const user = allUsers.find(u => u.id === userId);
+        await logAdminAction(status ? "USER_BLOCK" : "USER_UNBLOCK", {
+            userEmail: user ? user.email : userId,
+            targetUid: userId
+        }, userId);
+
         PaybuntuModal.alert("Success", `User ${status ? 'blocked' : 'unblocked'} successfully.`, "success");
-        loadAdminData(); // Changed from loadUsers() to loadAdminData() to match original context
+        loadAdminData(); 
     } catch (err) {
         PaybuntuModal.alert("Error", "Action failed: " + err.message, "error");
     }
@@ -276,8 +285,16 @@ async function promptAdjustBalance(userId) {
         await db.collection("users").doc(userId).update({
             balance: firebase.firestore.FieldValue.increment(parsedAmount)
         });
+        
+        const user = allUsers.find(u => u.id === userId);
+        await logAdminAction("BALANCE_ADJUST", {
+            amount: parsedAmount,
+            userEmail: user ? user.email : userId,
+            reason: "Admin Adjustment"
+        }, userId);
+
         PaybuntuModal.alert("Success", "Balance adjusted!", "success");
-        loadAdminData(); // Changed from loadUsers() to loadAdminData() to match original context
+        loadAdminData();
     } catch (err) {
         PaybuntuModal.alert("Error", "Action failed: " + err.message, "error");
     }
@@ -533,6 +550,13 @@ async function saveSystemConfig() {
 
     try {
         await db.collection("metadata").doc("system").set(config, { merge: true });
+        
+        await logAdminAction("SYSTEM_CONFIG", {
+            maintenanceMode: config.maintenanceMode,
+            feePercent: config.feePercent,
+            message: config.broadcastMessage ? "Updated" : "Cleared"
+        });
+
         PaybuntuModal.alert("Settings", "System configuration updated successfully!", "success");
     } catch (err) {
         PaybuntuModal.alert("Update Failed", "Failed to save configuration: " + err.message, "error");
@@ -696,4 +720,70 @@ async function viewGlobalReceipt(txId) {
     `;
     
     PaybuntuModal.alert("Transaction Receipt", receiptHtml, "info");
+}
+
+// --- Audit Logic ---
+async function logAdminAction(type, details, targetId = null) {
+    try {
+        const logEntry = {
+            action: type,
+            details: details,
+            targetId: targetId,
+            adminEmail: auth.currentUser.email,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await db.collection("audit_logs").add(logEntry);
+    } catch (err) {
+        console.error("Audit Logging Error:", err);
+    }
+}
+
+function setupAuditLogs() {
+    db.collection("audit_logs").orderBy("timestamp", "desc").limit(50).onSnapshot(snapshot => {
+        allAuditLogs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderAuditLogs();
+    });
+}
+
+function renderAuditLogs() {
+    const container = document.getElementById('auditLogsContainer');
+    if(!container) return;
+
+    if(allAuditLogs.length === 0) {
+        container.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">No system logs captured yet.</div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Admin</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${allAuditLogs.map(log => {
+                    const date = log.timestamp ? new Date(log.timestamp.toDate()).toLocaleString() : 'Just now';
+                    let detailsStr = "";
+                    if(typeof log.details === 'object') {
+                        detailsStr = Object.entries(log.details).map(([k, v]) => `<strong>${k}</strong>: ${v}`).join(', ');
+                    } else {
+                        detailsStr = log.details;
+                    }
+
+                    return `
+                        <tr>
+                            <td style="font-size: 11px; white-space: nowrap;">${date}</td>
+                            <td style="font-weight: 600; color: var(--primary);">${log.adminEmail.split('@')[0]}</td>
+                            <td><span class="status-pill active" style="font-size: 9px;">${log.action}</span></td>
+                            <td style="font-size: 12px; color: var(--text-muted);">${detailsStr}</td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
 }
