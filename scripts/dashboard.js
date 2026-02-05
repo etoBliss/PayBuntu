@@ -17,8 +17,9 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-let is2FAVerified = false; 
-let pendingTransferTask = null; // Store transfer logic if 2FA is needed
+let is2FAVerified = true; // 2FA Disabled for now
+let current2FACode = null; 
+let pendingTransferTask = null; 
 let systemConfig = {
     maintenanceMode: false,
     transferFeePercent: 0,
@@ -149,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Logout Logic
     const handleLogout = () => {
+        sessionStorage.removeItem('is2FAVerified');
         auth.signOut().then(() => {
             window.location.href = "login.html";
         });
@@ -269,15 +271,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const twoFactorToggle = document.getElementById("twoFactorToggle");
     if(twoFactorToggle) {
         twoFactorToggle.addEventListener("change", async (e) => {
+            const enabled = e.target.checked;
             try {
                 await db.collection("users").doc(auth.currentUser.uid).update({
-                    twoFactorEnabled: e.target.checked
+                    twoFactorEnabled: enabled
                 });
             } catch (err) {
-            console.error("2FA Toggle error:", err);
-            PaybuntuModal.alert("Toggle Failed", "Failed to update 2FA status.", "error");
-            this.checked = !enabled; // Revert checkbox
-        }
+                console.error("2FA Toggle error:", err);
+                PaybuntuModal.alert("Toggle Failed", "Failed to update 2FA status.", "error");
+                twoFactorToggle.checked = !enabled; // Revert checkbox
+            }
         });
     }
 
@@ -396,18 +399,33 @@ function closeEnterPinModal() {
 function open2FAModal(isCritical = false) {
     const modal = document.getElementById('twoFactorModal');
     const closeBtn = document.getElementById('close2FAModal');
+    const shield = document.getElementById('dashboardShield');
+
     if(isCritical) {
-        closeBtn.classList.add('hidden'); // Cannot bypass during login
+        if(closeBtn) closeBtn.classList.add('hidden'); // Cannot bypass during login
+        if(shield) shield.classList.remove('hidden');
     } else {
-        closeBtn.classList.remove('hidden');
+        if(closeBtn) closeBtn.classList.remove('hidden');
     }
+    
     modal.classList.remove('hidden');
     document.getElementById('twoFactorCode').value = "";
     document.getElementById('twoFactorError').classList.add('hidden');
+
+    // Generate and "Send" Code
+    current2FACode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("DEBUG: 2FA Code is", current2FACode);
+    
+    // Simulate SMS arrival
+    setTimeout(() => {
+        PaybuntuModal.alert("Simulated SMS", `Your Paybuntu verification code is: ${current2FACode}`, "info");
+    }, 800);
 }
 
 function close2FAModal() { 
     document.getElementById('twoFactorModal').classList.add('hidden'); 
+    const shield = document.getElementById('dashboardShield');
+    if(shield) shield.classList.add('hidden');
 }
 
 // --- System Configuration Support ---
@@ -464,9 +482,13 @@ async function handle2FAVerification() {
     const errorMsg = document.getElementById('twoFactorError');
     const btn = document.getElementById('verify2FABtn');
 
-    if(code === "123456") { // Mock 2FA Code
+    if(code === current2FACode) { 
         is2FAVerified = true;
+        sessionStorage.setItem('is2FAVerified', 'true');
         
+        const shield = document.getElementById('dashboardShield');
+        if(shield) shield.classList.add('hidden');
+
         // If this was protecting a transfer
         if(pendingTransferTask) {
             btn.disabled = true;
@@ -523,10 +545,10 @@ async function handlePinVerification() {
         if(userDoc.data().transactionPin === enteredPin) {
             closeEnterPinModal();
             
-            // Check for 2FA next
+            /* 2FA Check - Disabled for now
             if(userDoc.data().twoFactorEnabled) {
                 open2FAModal();
-            } else if(pendingTransferTask) {
+            } else */ if(pendingTransferTask) {
                 // Show loading in the PIN modal itself while execution happens
                 const btn = document.getElementById('verifyPinBtn');
                 btn.disabled = true;
@@ -843,12 +865,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     const userData = doc.data();
                     updateDashboard(userData);
 
-                    // 2FA Login Shield
+                    /* 2FA Login Shield - Disabled for now
                     if(userData.twoFactorEnabled && !is2FAVerified) {
                         document.querySelector('.dashboard-container').style.opacity = "0.1";
                         document.querySelector('.dashboard-container').style.pointerEvents = "none";
                         open2FAModal(true);
                     }
+                    */
                 }
             });
             

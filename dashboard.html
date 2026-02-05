@@ -17,6 +17,15 @@
 
 <body>
   <div class="dashboard-container">
+    <!-- 2FA Shield Overlay (Harder to bypass) -->
+    <div id="dashboardShield" class="modal-overlay hidden"
+      style="z-index: 9998; background: var(--bg-body); backdrop-filter: blur(10px);">
+      <div style="text-align: center; color: var(--text-main);">
+        <i class="fas fa-lock fa-3x" style="margin-bottom: 20px; color: var(--primary);"></i>
+        <h2>Security Verification Required</h2>
+        <p>Please complete the 2FA verification to access your dashboard.</p>
+      </div>
+    </div>
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="brand">
@@ -374,11 +383,12 @@
 
             <div class="security-option">
               <div class="sec-info">
-                <h4>Two-Factor Authentication</h4>
+                <h4>Two-Factor Authentication <span class="badge badge-info"
+                    style="font-size: 10px; margin-left: 5px;">COMING SOON</span></h4>
                 <p class="text-muted">Add an extra layer of security</p>
               </div>
-              <label class="switch">
-                <input type="checkbox" id="twoFactorToggle">
+              <label class="switch" style="opacity: 0.5; pointer-events: none;">
+                <input type="checkbox" id="twoFactorToggle" disabled>
                 <span class="slider round"></span>
               </label>
             </div>
