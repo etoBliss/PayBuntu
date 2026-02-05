@@ -19,6 +19,14 @@ const storage = firebase.storage();
 
 let is2FAVerified = false; 
 let pendingTransferTask = null; // Store transfer logic if 2FA is needed
+let systemConfig = {
+    maintenanceMode: false,
+    transferFeePercent: 0,
+    minTransferFee: 0,
+    broadcastMessage: ""
+};
+
+// ... existing code ...
 
 // db.collection("transactions")
 //   .where("userId", "==", userId)
@@ -136,6 +144,19 @@ function updateDashboard(userData) {
 
 // Settings Profile Update Logic
 document.addEventListener("DOMContentLoaded", () => {
+    // System Config Listener
+    listenToSystemConfig();
+
+    // Logout Logic
+    const logoutBtn = document.getElementById("logoutBtn");
+    if(logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            auth.signOut().then(() => {
+                window.location.href = "login.html";
+            });
+        });
+    }
+
     const profileForm = document.getElementById("profileForm");
     if(profileForm) {
         profileForm.addEventListener("submit", async (e) => {
@@ -341,9 +362,10 @@ function openSetupPinModal() {
 }
 function closeSetupPinModal() { document.getElementById('setupPinModal').classList.add('hidden'); }
 
-function openConfirmModal(recipient, amount) {
+function openConfirmModal(recipient, amount, fee = 0) {
     document.getElementById('confirmRecipient').textContent = recipient;
     document.getElementById('confirmAmount').textContent = formatCurrency(amount);
+    document.getElementById('confirmFee').textContent = fee > 0 ? formatCurrency(fee) : "Free";
     document.getElementById('confirmTransferModal').classList.remove('hidden');
 }
 function closeConfirmModal() { document.getElementById('confirmTransferModal').classList.add('hidden'); }
@@ -372,6 +394,55 @@ function open2FAModal(isCritical = false) {
 
 function close2FAModal() { 
     document.getElementById('twoFactorModal').classList.add('hidden'); 
+}
+
+// --- System Configuration Support ---
+
+function listenToSystemConfig() {
+    console.log("Starting System Config Listener...");
+    db.collection("metadata").doc("config").onSnapshot(doc => {
+        if(doc.exists) {
+            systemConfig = doc.data();
+            console.log("System Config Updated:", systemConfig);
+            applySystemConfig();
+        } else {
+            console.warn("System Config document missing!");
+        }
+    }, err => {
+        console.error("System Config Sync Error:", err);
+    });
+}
+
+function applySystemConfig() {
+    if(!systemConfig) return;
+    
+    // 1. Maintenance Mode
+    // We check auth.currentUser. If not available yet, we might wait or assume not admin
+    // To prevent flashing, we only redirect if we are SURE it's active
+    const user = auth.currentUser;
+    const isAdmin = user && user.email.toLowerCase() === "paybuntu@gmail.com";
+    
+    console.log("Applying System Config. Maintenance:", systemConfig.maintenanceMode, "IsAdmin:", isAdmin);
+
+    if(systemConfig.maintenanceMode) {
+        if(user && !isAdmin) {
+             console.log("Maintenance active. Redirecting regular user.");
+             window.location.href = "maintenance.html";
+             return; // Stop further processing
+        }
+    }
+
+    // 2. Broadcast Banner
+    const banner = document.getElementById("broadcastBanner");
+    const textSpan = document.getElementById("broadcastText");
+    if(systemConfig.broadcastMessage && systemConfig.broadcastMessage.trim() !== "") {
+        if(banner && textSpan) {
+            textSpan.textContent = systemConfig.broadcastMessage;
+            banner.classList.remove("hidden");
+        }
+    } else {
+        if(banner) banner.classList.add("hidden");
+    }
 }
 
 async function handle2FAVerification() {
@@ -735,6 +806,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Check authentication state
     auth.onAuthStateChanged((user) => {
+        // Re-apply system config once auth state is known (to correctly identify admin)
+        if(typeof applySystemConfig === "function") applySystemConfig();
+
         if (!user) {
             window.location.href = "login.html";
         } else {
@@ -822,6 +896,11 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       
       const amount = parseFloat(document.getElementById("transferAmount").value);
+      
+      // Calculate Fee based on systemConfig
+      const fee = Math.max(systemConfig.minTransferFee || 0, amount * ((systemConfig.transferFeePercent || 0) / 100));
+      const totalDeduction = amount + fee;
+
       const executeTransfer = async () => {
           const note = document.getElementById("transferNote").value || "";
           const btn = document.getElementById("sendMoneyBtn");
@@ -845,15 +924,15 @@ document.addEventListener("DOMContentLoaded", () => {
                   if(!senderDoc.exists) throw "Sender info missing";
                   
                   const senderBalance = senderDoc.data().balance || 0;
-                  if(senderBalance < amount) {
-                      throw "Insufficient funds.";
+                  if(senderBalance < totalDeduction) {
+                      throw `Insufficient funds. Total required: ${formatCurrency(totalDeduction)} (Inc. ${formatCurrency(fee)} fee)`;
                   }
 
                   const recipientRef = db.collection("users").doc(verifiedRecipient.id);
                   const recipientDoc = await transaction.get(recipientRef);
                   if(!recipientDoc.exists) throw "Recipient account invalid.";
 
-                  const newSenderBalance = senderBalance - amount;
+                  const newSenderBalance = senderBalance - totalDeduction;
                   const newRecipientBalance = (recipientDoc.data().balance || 0) + amount;
 
                   transaction.update(senderRef, { balance: newSenderBalance });
@@ -861,10 +940,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                   const senderTxRef = db.collection("transactions").doc();
                   transaction.set(senderTxRef, {
-                      id: senderTxRef.id, userId: senderId, amount: -amount,
-                      type: 'transfer_out', description: `Transfer to ${verifiedRecipient.firstName}`,
+                      id: senderTxRef.id, userId: senderId, amount: -totalDeduction,
+                      type: 'transfer_out', description: `Transfer to ${verifiedRecipient.firstName} (Fee: ${formatCurrency(fee)})`,
                       note: note, relatedUser: { name: verifiedRecipient.firstName + " " + verifiedRecipient.lastName, id: verifiedRecipient.id },
-                      status: 'completed', date: new Date().toISOString(), timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                      status: 'completed', date: new Date().toISOString(), timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                      fee: fee, baseAmount: amount
                   });
                   
                   const recipientTxRef = db.collection("transactions").doc();
@@ -903,7 +983,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       pendingTransferTask = executeTransfer;
-      openConfirmModal(verifiedRecipient.firstName + " " + verifiedRecipient.lastName, amount);
+      openConfirmModal(verifiedRecipient.firstName + " " + verifiedRecipient.lastName, amount, fee);
   });
 
   // Add navigation functionality (SPA Routing)

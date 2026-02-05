@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paybuntu - Admin Control Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="styles/admin.css" />
+    <link rel="shortcut icon" href="./assets/images/favicon/android-chrome-512x512.png" type="image/x-icon" />
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="admin-body" data-theme="dark">
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-university"></i>
+                <span>Paybuntu Admin</span>
+            </div>
+            <nav class="nav">
+                <div class="nav-item active" data-target="view-overview">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Overview</span>
+                </div>
+                <div class="nav-item" data-target="view-users">
+                    <i class="fas fa-users"></i>
+                    <span>User Management</span>
+                </div>
+                <div class="nav-item" data-target="view-transactions">
+                    <i class="fas fa-list-ul"></i>
+                    <span>Global Logs</span>
+                </div>
+                <div class="nav-item" data-target="view-settings">
+                    <i class="fas fa-tools"></i>
+                    <span>System Tools</span>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="adminLogoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="admin-header">
+                <h2>Control Center</h2>
+                <div class="user-info">
+                    <span id="adminEmail">paybuntu@gmail.com</span>
+                    <div class="status-dot"></div>
+                </div>
+            </header>
+
+            <div class="content-view" id="view-overview">
+                <div class="section-header">
+                    <h3>Analytics Overview</h3>
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-range="7d">7D</button>
+                        <button class="filter-btn" data-range="1m">1M</button>
+                        <button class="filter-btn" data-range="1y">1Y</button>
+                        <button class="filter-btn" data-range="5y">5Y</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="admin-card s-primary">
+                        <h3>Total Users</h3>
+                        <div class="val" id="totalUsers">0</div>
+                    </div>
+                    <div class="admin-card s-success">
+                        <h3>Total Balance</h3>
+                        <div class="val" id="totalBalance">NGN 0</div>
+                    </div>
+                    <div class="admin-card s-warning">
+                        <h3>Total Volume</h3>
+                        <div class="val" id="totalVolume">NGN 0</div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="admin-card chart-container">
+                        <h3>Transaction Volume Trends</h3>
+                        <canvas id="txVolumeChart"></canvas>
+                    </div>
+                    <div class="admin-card chart-container">
+                        <h3>User Balance Distribution</h3>
+                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="balanceDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="admin-card chart-container">
+                        <h3>App Usage (Logins)</h3>
+                        <canvas id="usageChart"></canvas>
+                    </div>
+                    <div class="admin-card chart-container">
+                        <h3>Transaction Types</h3>
+                        <div style="height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-view hidden" id="view-users">
+                <div class="section-header">
+                    <h3>Registered Users</h3>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="userSearch" placeholder="Search by name, email, or account...">
+                    </div>
+                </div>
+                <div class="admin-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Account No</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-view hidden" id="view-transactions">
+                <div class="section-header">
+                    <h3>Global Transaction Log</h3>
+                </div>
+                <div class="admin-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Sender</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="globalTxTableBody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-view hidden" id="view-settings">
+                <div class="section-header">
+                    <h3>System Configuration & Tools</h3>
+                    <button id="saveConfigBtn" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+                    <!-- Maintenance Mode -->
+                    <div class="admin-card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="margin: 0;">Maintenance Mode</h3>
+                            <label class="switch">
+                                <input type="checkbox" id="maintenanceToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">
+                            When active, regular users will see a maintenance page and won't be able to access their
+                            dashboard.
+                        </p>
+                    </div>
+
+                    <!-- Fee Management -->
+                    <div class="admin-card">
+                        <h3>Transaction Fees</h3>
+                        <div style="margin-top: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <label
+                                    style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">Transfer
+                                    Fee (%)</label>
+                                <input type="number" id="transferFeePercent" class="admin-input" step="0.1" value="0">
+                            </div>
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">Minimum
+                                    Fee (NGN)</label>
+                                <input type="number" id="minTransferFee" class="admin-input" step="10" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Broadcast Message -->
+                    <div class="admin-card">
+                        <h3>Global Broadcast</h3>
+                        <div style="margin-top: 20px;">
+                            <label
+                                style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">Banner
+                                Message</label>
+                            <textarea id="broadcastMessage" class="admin-input" style="height: 80px; resize: none;"
+                                placeholder="Enter system-wide announcement..."></textarea>
+                            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">
+                                Leave empty to disable the announcement banner.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3>System Logs (Placeholder)</h3>
+                    <div style="padding: 40px; text-align: center; color: var(--text-muted); font-style: italic;">
+                        System-wide security logs and admin activity audit will appear here.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="userActionModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Manage User</h3>
+            <div id="userModalDetails"></div>
+            <div class="admin-actions">
+                <button class="btn btn-warning" id="blockUserBtn">Block Account</button>
+                <button class="btn btn-primary" id="adjustBalanceBtn">Adjust Balance</button>
+                <button class="btn btn-outline" onclick="closeUserModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/admin.js"></script>
+</body>
+
+</html>

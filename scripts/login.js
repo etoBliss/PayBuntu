@@ -14,10 +14,31 @@ if (!firebase.apps.length) {
 }
 
 const auth = firebase.auth();
+const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // Wait for DOM to load before accessing elements
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  // Global Maintenance Check (for already logged-in users)
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        try {
+            const configDoc = await db.collection("metadata").doc("config").get();
+            const maintenanceMode = configDoc.exists ? configDoc.data().maintenanceMode : false;
+            
+            if (maintenanceMode && user.email.toLowerCase() !== "paybuntu@gmail.com") {
+                console.log("Persistence: Maintenance active. Signing out.");
+                await auth.signOut();
+            } else {
+                window.location.href = "dashboard.html";
+            }
+        } catch (e) {
+            console.error("Maintenance check error:", e);
+            window.location.href = "dashboard.html"; // Fallback
+        }
+    }
+  });
+
   // Get elements using IDs that MATCH YOUR HTML
   const loginForm = document.getElementById("loginForm");
   const loginBtn = document.getElementById("loginBtn");
@@ -73,6 +94,13 @@ document.addEventListener("DOMContentLoaded", () => {
             "Please verify your email first. A new verification email has been sent."
           );
         }
+        const configDoc = await firebase.firestore().collection("metadata").doc("config").get();
+        const systemConfig = configDoc.exists ? configDoc.data() : { maintenanceMode: false };
+
+        if (systemConfig.maintenanceMode && user.email.toLowerCase() !== "paybuntu@gmail.com") {
+          await auth.signOut();
+          throw new Error("System is under maintenance. Please try again later.");
+        }
 
         window.location.href = "./dashboard.html";
       } catch (error) {
@@ -95,6 +123,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         await auth.signInWithPopup(googleProvider);
+        const configDoc = await firebase.firestore().collection("metadata").doc("config").get();
+        const systemConfig = configDoc.exists ? configDoc.data() : { maintenanceMode: false };
+
+        if (systemConfig.maintenanceMode && auth.currentUser.email.toLowerCase() !== "paybuntu@gmail.com") {
+          await auth.signOut();
+          throw new Error("System is under maintenance. Please try again later.");
+        }
+
         window.location.href = "./dashboard.html";
       } catch (error) {
         console.error("Google login error:", error);

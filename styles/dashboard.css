@@ -396,8 +396,14 @@ body {
   border-collapse: collapse;
   background: var(--bg-surface);
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: var(--card-shadow);
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .transactions-table th {
@@ -855,13 +861,57 @@ body {
 
   .balance-amount {
     font-size: 28px;
+    word-break: break-all;
   }
 
   .transaction-status {
     display: none; /* Hide status label on very small screens to save space */
   }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .account-number {
+      font-size: 16px;
+      word-break: break-all;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 15px 12px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .welcome-text h2 {
+    font-size: 20px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   
-  /* Show icon instead of full status on mobile if needed, or just hide */
+  .actions .btn {
+      padding: 8px 12px;
+      font-size: 13px;
+  }
+
+  .actions .date-display {
+      width: 100%;
+      margin-bottom: 5px;
+      text-align: center;
+  }
+  
+  .user-avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 16px;
+  }
 }
 
 /* Account Page Styles */
@@ -1143,4 +1193,29 @@ input:checked + .slider:before {
     .faq-item {
         padding: 12px;
     }
+}
+
+/* Broadcast Banner */
+.broadcast-banner {
+    background: linear-gradient(90deg, var(--primary), #3b82f6);
+    color: #000;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.broadcast-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.broadcast-banner.hidden {
+    display: none;
 }

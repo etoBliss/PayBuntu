@@ -53,6 +53,13 @@
 
     <!-- Main Content -->
     <div class="main-content">
+      <!-- Broadcast Banner -->
+      <div id="broadcastBanner" class="broadcast-banner hidden">
+        <div class="broadcast-content">
+          <i class="fas fa-bullhorn"></i>
+          <span id="broadcastText"></span>
+        </div>
+      </div>
       <div class="header">
         <button class="menu-toggle" id="menuToggle">
           <i class="fas fa-bars"></i>
@@ -183,19 +190,21 @@
           <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
         </div>
 
-        <table class="transactions-table">
-          <thead>
-            <tr>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Amount</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="transactionsBody">
-            <!-- Transactions will be populated by JavaScript -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th class="desktop-only">Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsBody">
+              <!-- Transactions will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
       </div> <!-- End view-dashboard -->
 
       <!-- Transfer View -->
@@ -550,7 +559,7 @@
           </div>
           <div class="tx-details-list" style="margin-bottom: 20px;">
             <div class="detail-row"><span>Method</span><span>Instant Transfer</span></div>
-            <div class="detail-row"><span>Fee</span><span>Free</span></div>
+            <div class="detail-row"><span>Fee</span><span id="confirmFee">Free</span></div>
           </div>
           <button id="proceedToPinBtn" class="btn btn-primary" style="width: 100%; justify-content: center;">Confirm &
             Proceed</button>
