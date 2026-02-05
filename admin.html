@@ -39,6 +39,10 @@
                     <i class="fas fa-tools"></i>
                     <span>System Tools</span>
                 </div>
+                <div class="nav-item" data-target="view-support">
+                    <i class="fas fa-headset"></i>
+                    <span>Support Hub</span>
+                </div>
             </nav>
             <div class="sidebar-footer">
                 <button id="adminLogoutBtn" class="btn btn-danger">
@@ -149,6 +153,7 @@
                                 <th>Amount</th>
                                 <th>Type</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="globalTxTableBody">
@@ -158,6 +163,41 @@
                 </div>
             </div>
 
+            <div class="content-view hidden" id="view-support">
+                <div class="section-header">
+                    <h3>Support Management Hub</h3>
+                </div>
+
+                <div class="support-layout">
+                    <!-- Chat List Sidebar -->
+                    <div class="chat-list-panel admin-card">
+                        <div class="panel-header">Active Conversations</div>
+                        <div id="activeChatList" class="chat-list-container">
+                            <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                                <i class="fas fa-spinner fa-spin"></i> Loading chats...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Window -->
+                    <div class="chat-window-panel admin-card">
+                        <div id="selectedChatHeader" class="chat-window-header">
+                            Select a conversation to start chatting
+                        </div>
+                        <div id="adminChatMessages" class="chat-body admin-chat-body">
+                            <!-- Selected chat messages -->
+                        </div>
+                        <div class="chat-footer">
+                            <form id="adminChatForm">
+                                <input type="text" id="adminChatInput" placeholder="Type a reply..." disabled
+                                    autocomplete="off">
+                                <button type="submit" id="adminChatSendBtn" class="btn btn-primary" disabled><i
+                                        class="fas fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="content-view hidden" id="view-settings">
                 <div class="section-header">
                     <h3>System Configuration & Tools</h3>

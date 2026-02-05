@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupNavigation();
     setupFilters();
     setupConfigListeners();
+    setupSupportHub();
 });
 
 function setupFilters() {
@@ -166,6 +167,11 @@ function renderTransactions(txs) {
             </td>
             <td>${tx.type || 'Transfer'}</td>
             <td><span class="tx-status status-${tx.status}">${tx.status}</span></td>
+            <td>
+                <button class="btn btn-outline btn-sm" onclick="viewGlobalReceipt('${tx.id}')">
+                    <i class="fas fa-receipt"></i>
+                </button>
+            </td>
         </tr>
     `).join('');
 }
@@ -218,6 +224,32 @@ function openUserActions(userId) {
     
     blockBtn.onclick = () => blockUser(userId, !user.isBlocked);
     document.getElementById('adjustBalanceBtn').onclick = () => promptAdjustBalance(userId);
+
+    // Additional Information
+    const extraDetails = document.createElement('div');
+    extraDetails.innerHTML = `
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 13px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <div style="color: var(--text-muted);">Join Date</div>
+                    <div>${user.createdAt ? new Date(user.createdAt.toDate ? user.createdAt.toDate() : user.createdAt).toLocaleDateString() : 'N/A'}</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-muted);">Phone Status</div>
+                    <div style="color: ${user.phoneVerified ? 'var(--accent)' : 'var(--danger)'}">${user.phoneVerified ? 'VERIFIED' : 'UNVERIFIED'}</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-muted);">2FA Status</div>
+                    <div>${user.twoFactorEnabled ? 'ENABLED' : 'DISABLED'}</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-muted);">Database UID</div>
+                    <div style="font-family: monospace; font-size: 11px;">${user.id}</div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('userModalDetails').appendChild(extraDetails);
 }
 
 function closeUserModal() {
@@ -508,4 +540,131 @@ async function saveSystemConfig() {
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
+}
+
+// --- Support Hub Logic ---
+let activeChats = [];
+let selectedChatId = null;
+let chatUnsubscribe = null;
+
+function setupSupportHub() {
+    const chatForm = document.getElementById('adminChatForm');
+    if(chatForm) {
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendAdminReply();
+        });
+    }
+
+    db.collection("support_chats").orderBy("lastUpdated", "desc").onSnapshot(snapshot => {
+        activeChats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderChatList();
+        
+        // Refresh selected chat if it was updated
+        if(selectedChatId) {
+            const updated = activeChats.find(c => c.id === selectedChatId);
+            if(updated) renderAdminMessages(updated.messages);
+        }
+    });
+}
+
+function renderChatList() {
+    const list = document.getElementById('activeChatList');
+    if(!list) return;
+
+    if(activeChats.length === 0) {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">No active conversations</div>';
+        return;
+    }
+
+    list.innerHTML = activeChats.map(chat => `
+        <div class="chat-item ${selectedChatId === chat.id ? 'active' : ''} ${chat.hasUnread ? 'unread' : ''}" 
+             onclick="selectChat('${chat.id}')">
+            <div class="chat-item-info">
+                <span class="email">${chat.userName || chat.userEmail || 'Anonymous'}</span>
+                <span class="time">${chat.lastUpdated ? new Date(chat.lastUpdated.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+            </div>
+            <div class="last-msg">${chat.lastMessage || '...'}</div>
+        </div>
+    `).join('');
+}
+
+async function selectChat(chatId) {
+    selectedChatId = chatId;
+    const chat = activeChats.find(c => c.id === chatId);
+    if(!chat) return;
+
+    // UI Updates
+    document.getElementById('selectedChatHeader').innerHTML = `Chatting with: <strong>${chat.userEmail}</strong>`;
+    document.getElementById('adminChatInput').disabled = false;
+    document.getElementById('adminChatSendBtn').disabled = false;
+    
+    renderChatList(); // Refresh active state
+    renderAdminMessages(chat.messages);
+
+    // Mark as Read
+    if(chat.hasUnread) {
+        try {
+            await db.collection("support_chats").doc(chatId).update({ hasUnread: false });
+        } catch(err) { console.error("Mark read error:", err); }
+    }
+}
+
+function renderAdminMessages(messages) {
+    const chatBox = document.getElementById('adminChatMessages');
+    if(!chatBox || !messages) return;
+
+    chatBox.innerHTML = messages.map(msg => `
+        <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
+            ${msg.text}
+        </div>
+    `).join('');
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendAdminReply() {
+    const input = document.getElementById('adminChatInput');
+    const text = input.value.trim();
+    if(!text || !selectedChatId) return;
+
+    input.value = "";
+    
+    try {
+        const newMessage = {
+            text: text,
+            sender: 'admin',
+            timestamp: new Date().toISOString()
+        };
+
+        await db.collection("support_chats").doc(selectedChatId).update({
+            messages: firebase.firestore.FieldValue.arrayUnion(newMessage),
+            lastMessage: text,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+            hasUnread: false // Admin replied, so no new unread for admin
+        });
+    } catch(err) {
+        alert("Reply failed: " + err.message);
+    }
+}
+
+// --- Global Receipt Viewer ---
+function viewGlobalReceipt(txId) {
+    const tx = allTransactions.find(t => t.id === txId);
+    if(!tx) return;
+
+    // We can show a simple alert or reuse the receipt logic
+    const details = `
+        TRANSACTION RECEIPT
+        -------------------
+        Ref: ${tx.id}
+        Date: ${new Date(tx.date).toLocaleString()}
+        Amount: ${formatCurrency(Math.abs(tx.amount))}
+        Status: ${tx.status.toUpperCase()}
+        Description: ${tx.description}
+        Type: ${tx.type}
+        -------------------
+        PAYBUNTU ADMIN AUDIT
+    `;
+    alert(details);
 }

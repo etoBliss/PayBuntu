@@ -349,6 +349,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 1500);
         });
     }
+
+    // Chat Form Listener
+    const chatForm = document.getElementById("chatForm");
+    if(chatForm) {
+        chatForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            sendSupportMessage();
+        });
+    }
 });
 
 // Modal Control Functions
@@ -1049,5 +1058,91 @@ function showSuccessModal(recipient, amount) {
 function closeSuccessAndGoHome() {
     document.getElementById('successModal').classList.add('hidden');
     document.querySelector('[data-target="view-dashboard"]').click();
+}
+
+// --- Live Support Chat Functions ---
+let chatUnsubscribe = null;
+
+function openSupportChat() {
+    document.getElementById('supportChatModal').classList.remove('hidden');
+    listenToChatMessages();
+}
+
+function closeSupportChat() {
+    document.getElementById('supportChatModal').classList.add('hidden');
+    if(chatUnsubscribe) chatUnsubscribe();
+}
+
+function listenToChatMessages() {
+    const userId = auth.currentUser.uid;
+    const chatBox = document.getElementById('chatMessages');
+
+    chatUnsubscribe = db.collection("support_chats").doc(userId).onSnapshot(doc => {
+        if(doc.exists) {
+            const data = doc.data();
+            const messages = data.messages || [];
+            
+            // Render basic messages
+            chatBox.innerHTML = `
+                <div class="chat-bubble bot">
+                    Hello! I'm your Paybuntu support assistant. How can I help you today?
+                </div>
+                ${messages.map(msg => `
+                    <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
+                        ${msg.text}
+                    </div>
+                `).join('')}
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+}
+
+async function sendSupportMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if(!text) return;
+
+    const userId = auth.currentUser.uid;
+    input.value = "";
+
+    try {
+        const chatRef = db.collection("support_chats").doc(userId);
+        const chatDoc = await chatRef.get();
+        
+        // Fetch user basic info for identification
+        const userDoc = await db.collection("users").doc(userId).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        const userName = userData.fullName || "User";
+
+        const newMessage = {
+            text: text,
+            sender: 'user',
+            timestamp: new Date().toISOString()
+        };
+
+        if(!chatDoc.exists) {
+            await chatRef.set({
+                userId: userId,
+                userEmail: auth.currentUser.email,
+                userName: userName, // Added for privacy-safe admin viewing
+                messages: [newMessage],
+                lastMessage: text,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                hasUnread: true
+            });
+        } else {
+            await chatRef.update({
+                messages: firebase.firestore.FieldValue.arrayUnion(newMessage),
+                lastMessage: text,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                hasUnread: true,
+                userName: userName // Ensure it's up to date
+            });
+        }
+    } catch(err) {
+        console.error("Chat Send Error:", err);
+        alert("Failed to send message.");
+    }
 }
 
