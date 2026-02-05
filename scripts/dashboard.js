@@ -148,14 +148,17 @@ document.addEventListener("DOMContentLoaded", () => {
     listenToSystemConfig();
 
     // Logout Logic
-    const logoutBtn = document.getElementById("logoutBtn");
-    if(logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            auth.signOut().then(() => {
-                window.location.href = "login.html";
-            });
+    const handleLogout = () => {
+        auth.signOut().then(() => {
+            window.location.href = "login.html";
         });
-    }
+    };
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if(logoutBtn) logoutBtn.addEventListener("click", handleLogout);
+
+    const logoutBtnMobile = document.getElementById("logoutBtnMobile");
+    if(logoutBtnMobile) logoutBtnMobile.addEventListener("click", handleLogout);
 
     const profileForm = document.getElementById("profileForm");
     if(profileForm) {
@@ -175,10 +178,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 await db.collection("users").doc(auth.currentUser.uid).update(updates);
-                alert("Profile Updated Successfully!");
+                PaybuntuModal.alert("Success", "Profile Updated Successfully!", "success");
             } catch(err) {
                 console.error(err);
-                alert("Error updating profile: " + err.message);
+                PaybuntuModal.alert("Update Failed", "Error updating profile: " + err.message, "error");
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -243,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const confirmPass = document.getElementById("confirmPassword").value;
 
             if(newPass !== confirmPass) {
-                alert("New passwords do not match.");
+                PaybuntuModal.alert("Mismatch", "New passwords do not match.", "warning");
                 return;
             }
 
@@ -252,12 +255,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 const credential = firebase.auth.EmailAuthProvider.credential(auth.currentUser.email, currentPass);
                 await auth.currentUser.reauthenticateWithCredential(credential);
                 await auth.currentUser.updatePassword(newPass);
-                alert("Password updated successfully!");
+                PaybuntuModal.alert("Security", "Password updated successfully!", "success");
                 closePasswordModal();
                 passwordForm.reset();
             } catch(err) {
                 console.error(err);
-                alert("Password update failed: " + err.message);
+                PaybuntuModal.alert("Security Error", "Password update failed: " + err.message, "error");
             }
         });
     }
@@ -270,11 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 await db.collection("users").doc(auth.currentUser.uid).update({
                     twoFactorEnabled: e.target.checked
                 });
-            } catch(err) {
-                console.error(err);
-                alert("Failed to update 2FA status.");
-                e.target.checked = !e.target.checked; // Revert
-            }
+            } catch (err) {
+            console.error("2FA Toggle error:", err);
+            PaybuntuModal.alert("Toggle Failed", "Failed to update 2FA status.", "error");
+            this.checked = !enabled; // Revert checkbox
+        }
         });
     }
 
@@ -324,8 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if(verifyPhoneBtn) {
         verifyPhoneBtn.addEventListener("click", () => {
             const phone = document.getElementById("settingPhone").value;
-            if(!phone || phone.length < 10) {
-                alert("Please enter a valid phone number first.");
+            if(!auth.currentUser.phoneNumber && !db.collection("users").doc(auth.currentUser.uid).get().then(doc => doc.data().phone)) {
+                PaybuntuModal.alert("Verification", "Please enter a valid phone number first.", "info");
                 return;
             }
             
@@ -333,8 +336,10 @@ document.addEventListener("DOMContentLoaded", () => {
             feedback.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending code...';
             feedback.style.color = "var(--primary)";
 
-            setTimeout(() => {
-                const code = prompt("Enter the 6-digit code sent to " + phone + " (Use 123456)");
+            setTimeout(async () => {
+                const code = await PaybuntuModal.prompt("Phone Verification", `Enter the 6-digit code sent to ${phone} (Use 123456)`, "123456", "number");
+                if(!code) return;
+                
                 if(code === "123456") {
                     feedback.innerHTML = '<i class="fas fa-check-circle"></i> Phone Verified';
                     feedback.style.color = "var(--accent)";
@@ -489,11 +494,11 @@ async function handlePinSetup(e) {
     const confirm = document.getElementById('confirmTransactionPin').value;
 
     if(pin.length !== 4) {
-        alert("PIN must be exactly 4 digits.");
+        PaybuntuModal.alert("Invalid PIN", "PIN must be exactly 4 digits.", "warning");
         return;
     }
     if(pin !== confirm) {
-        alert("PINs do not match.");
+        PaybuntuModal.alert("Mismatch", "PINs do not match.", "warning");
         return;
     }
 
@@ -501,11 +506,11 @@ async function handlePinSetup(e) {
         await db.collection("users").doc(auth.currentUser.uid).update({
             transactionPin: pin
         });
-        alert("Transaction PIN updated successfully!");
+        PaybuntuModal.alert("PIN Updated", "Transaction PIN updated successfully!", "success");
         closeSetupPinModal();
     } catch(err) {
         console.error(err);
-        alert("Failed to update PIN: " + err.message);
+        PaybuntuModal.alert("Update Failed", "Failed to update PIN: " + err.message, "error");
     }
 }
 
@@ -537,7 +542,7 @@ async function handlePinVerification() {
         }
     } catch(err) {
         console.error(err);
-        alert("Verification error: " + err.message);
+        PaybuntuModal.alert("Verification Error", "Verification error: " + err.message, "error");
     }
 }
 
@@ -652,7 +657,13 @@ function listenToTransactions(userId) {
           return dateB - dateA;
       });
 
-      docs.forEach((transaction) => {
+      // Store globally for filtering
+      window.allTransactions = docs;
+      
+      // Limit to 3 for Dashboard
+      const recentDocs = docs.slice(0, 3);
+
+      recentDocs.forEach((transaction) => {
         const row = document.createElement("tr");
         row.style.cursor = "pointer";
         row.onclick = () => showTransactionDetails(transaction);
@@ -660,9 +671,8 @@ function listenToTransactions(userId) {
         const typeIconClass = `type-${transaction.type}`;
         let typeIcon;
         
-        // Map types (transfer_out, transfer_in, etc)
-        if(transaction.type.includes('in') || transaction.type === 'income') typeIcon = 'fa-arrow-down';
-        else if(transaction.type.includes('out')) typeIcon = 'fa-paper-plane';
+        if(transaction.type.includes('in') || transaction.type === 'income' || transaction.type === 'credit') typeIcon = 'fa-arrow-down';
+        else if(transaction.type.includes('out') || transaction.type === 'debit') typeIcon = 'fa-paper-plane';
         else if(transaction.type === 'expense') typeIcon = 'fa-shopping-cart';
         else typeIcon = 'fa-circle';
 
@@ -687,6 +697,9 @@ function listenToTransactions(userId) {
 
         transactionsBody.appendChild(row);
       });
+      
+      // Update Month Filter
+      populateMonthFilter(docs);
     }, (error) => {
         console.error("Error listening to transactions:", error);
         transactionsBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: red;">Error loading data: ${error.message}</td></tr>`;
@@ -916,7 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const originalText = btn.innerHTML;
 
           if(!verifiedRecipient) {
-              alert("Please enter a valid recipient first.");
+              PaybuntuModal.alert("Missing Details", "Please enter a valid recipient first.", "warning");
               return;
           }
 
@@ -974,7 +987,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           } catch (error) {
               console.error(error);
-              alert("Transfer Failed: " + error);
+              PaybuntuModal.alert("Transfer Failed", "Transfer Failed: " + error, "error");
           } finally {
               btn.disabled = false;
               btn.innerHTML = originalText;
@@ -985,8 +998,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const userSnap = await db.collection("users").doc(auth.currentUser.uid).get();
       const userData = userSnap.data();
 
-      if(!userData.transactionPin) {
-          alert("You must set up a Transaction PIN before you can send money.");
+      if (!userData.transactionPin) {
+          PaybuntuModal.alert("Security", "You must set up a Transaction PIN before you can send money.", "warning");
           openSetupPinModal();
           return;
       }
@@ -1086,14 +1099,22 @@ function listenToChatMessages() {
             chatBox.innerHTML = `
                 <div class="chat-bubble bot">
                     Hello! I'm your Paybuntu support assistant. How can I help you today?
+                    <span class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
                 ${messages.map(msg => `
                     <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
                         ${msg.text}
+                        <span class="chat-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
                 `).join('')}
             `;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Smooth scroll to bottom
+            setTimeout(() => {
+                chatBox.scrollTo({
+                    top: chatBox.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
         }
     });
 }
@@ -1141,8 +1162,189 @@ async function sendSupportMessage() {
             });
         }
     } catch(err) {
-        console.error("Chat Send Error:", err);
-        alert("Failed to send message.");
+        console.error("Chat send error:", err);
+        PaybuntuModal.alert("Chat Error", "Failed to send message.", "error");
     }
 }
 
+// --- Full History Logic ---
+function openFullHistory() {
+    document.getElementById('fullHistoryModal').classList.remove('hidden');
+    renderFullHistory(window.allTransactions || []);
+}
+
+function closeFullHistory() {
+    document.getElementById('fullHistoryModal').classList.add('hidden');
+}
+
+function populateMonthFilter(txs) {
+    const filter = document.getElementById('monthFilter');
+    if(!filter) return;
+    
+    const months = new Set();
+    txs.forEach(tx => {
+        const date = tx.timestamp ? tx.timestamp.toDate() : new Date(tx.date);
+        const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+        months.add(monthYear);
+    });
+
+    const currentValue = filter.value || 'all';
+    filter.innerHTML = '<option value="all">All Time History</option>';
+    Array.from(months).sort((a,b) => new Date(b) - new Date(a)).forEach(m => {
+        filter.innerHTML += `<option value="${m}">${m}</option>`;
+    });
+    filter.value = currentValue;
+}
+
+function filterHistoryByMonth() {
+    const month = document.getElementById('monthFilter').value;
+    const search = document.getElementById('historySearch').value.toLowerCase();
+    
+    let filtered = window.allTransactions || [];
+    
+    if(month !== 'all') {
+        filtered = filtered.filter(tx => {
+            const date = tx.timestamp ? tx.timestamp.toDate() : new Date(tx.date);
+            return date.toLocaleString('default', { month: 'long', year: 'numeric' }) === month;
+        });
+    }
+    
+    if(search) {
+        filtered = filtered.filter(tx => 
+            tx.description.toLowerCase().includes(search) || 
+            tx.status.toLowerCase().includes(search)
+        );
+    }
+    
+    renderFullHistory(filtered);
+}
+
+function filterHistoryBySearch() {
+    filterHistoryByMonth();
+}
+
+function renderFullHistory(txs) {
+    const body = document.getElementById('fullHistoryBody');
+    if(!body) return;
+    
+    body.innerHTML = '';
+    
+    if(!txs || txs.length === 0) {
+        body.innerHTML = '<div style="text-align:center; padding: 60px 40px; color: var(--text-muted);"><i class="fas fa-search" style="font-size: 40px; margin-bottom: 20px; opacity: 0.2;"></i><p>No transactions found for this period.</p></div>';
+        updateMonthlySummary(0, 0);
+        return;
+    }
+
+    // Sort by date group
+    const groups = {};
+    let income = 0;
+    let expense = 0;
+
+    txs.forEach(tx => {
+        if(tx.amount > 0) income += tx.amount;
+        else expense += Math.abs(tx.amount);
+
+        const date = tx.timestamp ? tx.timestamp.toDate() : new Date(tx.date);
+        const dateKey = date.toLocaleDateString('default', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        if(!groups[dateKey]) groups[dateKey] = [];
+        groups[dateKey].push(tx);
+    });
+
+    Object.keys(groups).forEach(dateKey => {
+        const dayTxs = groups[dateKey];
+        const groupContainer = document.createElement('div');
+        groupContainer.className = 'history-day-group';
+        
+        let dayTotal = dayTxs.reduce((sum, t) => sum + t.amount, 0);
+
+        groupContainer.innerHTML = `
+            <div class="history-date-header">
+                <span>${dateKey}</span>
+                <span style="color: ${dayTotal >= 0 ? 'var(--primary)' : 'var(--danger)'}">
+                    ${dayTotal >= 0 ? '+' : ''}${formatCurrency(dayTotal)}
+                </span>
+            </div>
+        `;
+
+        dayTxs.forEach(tx => {
+            const row = document.createElement('div');
+            row.className = 'history-row';
+            row.onclick = () => showTransactionDetails(tx);
+
+            const isCredit = tx.amount > 0;
+            const typeIcon = isCredit ? 'fa-arrow-down' : 'fa-paper-plane';
+            const iconBg = isCredit ? 'rgba(46, 220, 91, 0.1)' : 'rgba(255, 71, 87, 0.1)';
+            const iconColor = isCredit ? 'var(--primary)' : '#ff4757';
+
+            row.innerHTML = `
+                <div class="tx-icon" style="background: ${iconBg}; color: ${iconColor};">
+                    <i class="fas ${typeIcon}"></i>
+                </div>
+                <div class="tx-details">
+                    <div class="tx-title">${tx.description}</div>
+                    <div class="tx-subtitle">${tx.id.substring(0,10).toUpperCase()} • ${tx.type.replace('_',' ')}</div>
+                </div>
+                <div class="tx-amount" style="color: ${isCredit ? 'var(--primary)' : 'var(--text-main)'}">
+                    ${isCredit ? '+' : ''}${formatCurrency(tx.amount)}
+                </div>
+                <div class="tx-status status-${tx.status}">${tx.status}</div>
+            `;
+            groupContainer.appendChild(row);
+        });
+
+        body.appendChild(groupContainer);
+    });
+
+    updateMonthlySummary(income, expense);
+}
+
+function updateMonthlySummary(income, expense) {
+    const inEl = document.getElementById('monthlyIn');
+    const outEl = document.getElementById('monthlyOut');
+    if(inEl) inEl.textContent = formatCurrency(income);
+    if(outEl) outEl.textContent = formatCurrency(expense);
+}
+
+function printMonthlyStatement() {
+    const month = document.getElementById('monthFilter').value;
+    const title = month === 'all' ? 'Full Transaction History' : `Statement for ${month}`;
+    
+    const printWindow = window.open('', '_blank');
+    const content = document.getElementById('fullHistoryModal').innerHTML;
+    
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Paybuntu Statement - ${title}</title>
+                <style>
+                    body { font-family: sans-serif; padding: 40px; color: #333; }
+                    .modal-header h3 { color: #2edc5b; margin-bottom: 30px; }
+                    .history-summary { display: flex; gap: 40px; margin-bottom: 40px; padding: 20px; background: #f9f9f9; }
+                    .summary-card { flex: 1; }
+                    .card-label { font-size: 12px; color: #666; text-transform: uppercase; }
+                    .card-value { font-size: 20px; font-weight: bold; }
+                    .history-date-header { padding: 10px; background: #eee; font-weight: bold; margin-top: 20px; border-radius: 4px; }
+                    .history-row { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+                    .tx-details { flex: 1; }
+                    .tx-title { font-weight: bold; }
+                    .tx-subtitle { font-size: 11px; color: #888; }
+                    .tx-amount { font-weight: bold; }
+                    .tx-status { font-size: 10px; margin-left: 20px; text-transform: uppercase; border: 1px solid #ccc; padding: 2px 5px; }
+                    .close-modal, .history-filters, .btn, .tx-icon { display: none; }
+                </style>
+            </head>
+            <body>
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h1 style="color: #2edc5b;">PAYBUNTU</h1>
+                    <p>Official Transaction Statement</p>
+                </div>
+                ${content}
+                <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #888; text-align: center;">
+                    This is a computer-generated document. No signature required.
+                </div>
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}

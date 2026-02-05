@@ -77,7 +77,7 @@
           <div class="date-display">
             <i class="far fa-calendar-alt"></i> <span id="currentDate"></span>
           </div>
-          <button class="btn btn-outline">
+          <button class="btn btn-outline" id="notifBell">
             <i class="fas fa-bell"></i>
           </button>
           <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Dark Mode">
@@ -187,7 +187,8 @@
         <!-- Recent Transactions -->
         <div class="section-header">
           <h2 class="section-title">Recent Transactions</h2>
-          <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+          <a href="javascript:void(0)" class="view-all" onclick="openFullHistory()">View All <i
+              class="fas fa-arrow-right"></i></a>
         </div>
 
         <div class="table-responsive">
@@ -396,6 +397,47 @@
                 <p class="text-muted" id="pinStatusText">Not set up yet</p>
               </div>
               <button class="btn btn-outline btn-sm" id="setupPinBtn">Manage</button>
+            </div>
+          </div>
+
+          <!-- Mobile Only Actions -->
+          <div class="card mobile-only-actions-card">
+            <div class="card-header">
+              <div class="card-title">Mobile Preferences</div>
+              <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);"><i
+                  class="fas fa-mobile-alt"></i></div>
+            </div>
+
+            <div class="security-option">
+              <div class="sec-info">
+                <h4>Dark Mode</h4>
+                <p class="text-muted">Toggle app appearance</p>
+              </div>
+              <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle Dark Mode"
+                style="border: 1px solid var(--border);">
+                <i class="fas fa-moon"></i>
+              </button>
+            </div>
+
+            <div class="security-option">
+              <div class="sec-info">
+                <h4>Notifications</h4>
+                <p class="text-muted">View recent alerts</p>
+              </div>
+              <button class="btn btn-outline btn-sm"
+                onclick="PaybuntuModal.alert('Notifications', 'No new notifications.', 'info')">View</button>
+            </div>
+
+            <div class="security-option"
+              style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+              <div class="sec-info">
+                <h4 style="color: var(--danger);">Logout</h4>
+                <p class="text-muted">Securely sign out</p>
+              </div>
+              <button class="btn btn-outline btn-sm" id="logoutBtnMobile"
+                style="border-color: var(--danger); color: var(--danger);">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+              </button>
             </div>
           </div>
         </div>
@@ -617,6 +659,52 @@
       </div>
     </div>
 
+    <!-- Full History Modal -->
+    <div id="fullHistoryModal" class="modal-overlay hidden">
+      <div class="modal-content modal-xl fade-in"
+        style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border); padding: 25px;">
+          <h3 style="font-size: 20px; font-weight: 700;">Transaction History</h3>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline btn-sm" onclick="printMonthlyStatement()" title="Print Statement">
+              <i class="fas fa-print"></i>
+            </button>
+            <button class="close-modal" onclick="closeFullHistory()"
+              style="position: static; font-size: 24px;">&times;</button>
+          </div>
+        </div>
+
+        <div class="history-filters">
+          <div class="filter-group" style="flex: 0 0 200px;">
+            <i class="fas fa-calendar-alt"></i>
+            <select id="monthFilter" onchange="filterHistoryByMonth()">
+              <option value="all">All Time History</option>
+            </select>
+          </div>
+          <div class="filter-group" style="flex: 1;">
+            <i class="fas fa-search"></i>
+            <input type="text" id="historySearch" placeholder="Search by description or status..."
+              oninput="filterHistoryBySearch()">
+          </div>
+        </div>
+
+        <div class="history-summary">
+          <div class="summary-card income">
+            <div class="card-label">Monthly Incoming</div>
+            <div class="card-value" id="monthlyIn">NGN 0.00</div>
+          </div>
+          <div class="summary-card expense">
+            <div class="card-label">Monthly Outgoing</div>
+            <div class="card-value" id="monthlyOut">NGN 0.00</div>
+          </div>
+        </div>
+
+        <div class="history-modal-body" id="fullHistoryBody">
+          <!-- History groups populated by JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- Support Chat Modal -->
     <div id="supportChatModal" class="modal-overlay hidden">
       <div class="modal-content chat-modal fade-in">
@@ -625,7 +713,10 @@
             <div class="chat-avatar">AD</div>
             <div>
               <h3 style="margin: 0; font-size: 16px;">Paybuntu Support</h3>
-              <p style="margin: 0; font-size: 12px; color: var(--primary);">Online (24/7)</p>
+              <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                Online (24/7)
+              </div>
             </div>
           </div>
           <button class="close-modal" onclick="closeSupportChat()">&times;</button>
@@ -645,7 +736,32 @@
       </div>
     </div>
 
+    <!-- Mobile Footer Navigation -->
+    <footer class="mobile-footer-nav">
+      <div class="nav-item active" data-target="view-dashboard">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" data-target="view-transfer">
+        <i class="fas fa-exchange-alt"></i>
+        <span>Pay</span>
+      </div>
+      <div class="nav-item" data-target="view-account">
+        <i class="fas fa-wallet"></i>
+        <span>Vault</span>
+      </div>
+      <div class="nav-item" data-target="view-settings">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </div>
+      <div class="nav-item" data-target="view-support">
+        <i class="fas fa-question-circle"></i>
+        <span>Help</span>
+      </div>
+    </footer>
+
     <!-- Firebase SDKs -->
+    <script src="scripts/modalservice.js"></script>
     <script src="scripts/dashboard.js"></script>
 </body>
 

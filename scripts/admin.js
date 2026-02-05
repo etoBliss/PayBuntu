@@ -55,10 +55,9 @@ function checkAdminAuth() {
             return;
         }
 
-        if (user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-            console.warn("Access Denied: Logged in as " + user.email + ". Expected " + ADMIN_EMAIL);
-            alert("Unauthorized access. Admin only.");
-            window.location.href = "dashboard.html";
+        if (auth.currentUser.email !== 'paybuntu@gmail.com') {
+            PaybuntuModal.alert("Access Denied", "Unauthorized access. Admin only.", "error");
+            setTimeout(() => window.location.href = 'index.html', 2000);
             return;
         }
 
@@ -124,7 +123,7 @@ Current User: ${auth.currentUser ? auth.currentUser.email : 'None'}
 Error: ${err.message}
 
 Ensure you have deployed the 'firestore.rules' file to your Firebase console.`;
-        alert(errorMsg);
+        PaybuntuModal.alert("Load Error", errorMsg, "error");
     }
 }
 
@@ -222,7 +221,7 @@ function openUserActions(userId) {
     blockBtn.textContent = user.isBlocked ? 'Unblock User' : 'Block User';
     blockBtn.className = user.isBlocked ? 'btn btn-success' : 'btn btn-danger';
     
-    blockBtn.onclick = () => blockUser(userId, !user.isBlocked);
+    blockBtn.onclick = () => toggleUserStatus(userId, !user.isBlocked);
     document.getElementById('adjustBalanceBtn').onclick = () => promptAdjustBalance(userId);
 
     // Additional Information
@@ -256,29 +255,31 @@ function closeUserModal() {
     document.getElementById('userActionModal').classList.add('hidden');
 }
 
-async function blockUser(userId, status) {
-    if(!confirm(`Are you sure you want to ${status ? 'BLOCK' : 'UNBLOCK'} this user?`)) return;
+async function toggleUserStatus(userId, status) {
+    const confirmed = await PaybuntuModal.confirm("Confirm Action", `Are you sure you want to ${status ? 'BLOCK' : 'UNBLOCK'} this user?`);
+    if(!confirmed) return;
     try {
         await db.collection("users").doc(userId).update({ isBlocked: status });
-        alert(`User ${status ? 'blocked' : 'unblocked'} successfully.`);
-        closeUserModal();
-        loadAdminData();
-    } catch(err) {
-        alert("Action failed: " + err.message);
+        PaybuntuModal.alert("Success", `User ${status ? 'blocked' : 'unblocked'} successfully.`, "success");
+        loadAdminData(); // Changed from loadUsers() to loadAdminData() to match original context
+    } catch (err) {
+        PaybuntuModal.alert("Error", "Action failed: " + err.message, "error");
     }
 }
 
 async function promptAdjustBalance(userId) {
-    const amount = prompt("Enter new balance for this user (NGN):");
-    if(amount === null || isNaN(amount)) return;
+    const amount = await PaybuntuModal.prompt("Adjust Balance", "Enter amount to add (positive) or subtract (negative) (NGN):", "e.g. 5000", "number");
+    if (amount === null || amount === "" || isNaN(amount)) return;
+    const parsedAmount = parseFloat(amount);
 
     try {
-        await db.collection("users").doc(userId).update({ balance: parseFloat(amount) });
-        alert("Balance adjusted!");
-        closeUserModal();
-        loadAdminData();
-    } catch(err) {
-        alert("Action failed: " + err.message);
+        await db.collection("users").doc(userId).update({
+            balance: firebase.firestore.FieldValue.increment(parsedAmount)
+        });
+        PaybuntuModal.alert("Success", "Balance adjusted!", "success");
+        loadAdminData(); // Changed from loadUsers() to loadAdminData() to match original context
+    } catch (err) {
+        PaybuntuModal.alert("Error", "Action failed: " + err.message, "error");
     }
 }
 
@@ -531,11 +532,10 @@ async function saveSystemConfig() {
     };
 
     try {
-        await db.collection("metadata").doc("config").set(config, { merge: true });
-        alert("System configuration updated successfully!");
-    } catch(err) {
-        console.error("Error saving config:", err);
-        alert("Failed to save configuration: " + err.message);
+        await db.collection("metadata").doc("system").set(config, { merge: true });
+        PaybuntuModal.alert("Settings", "System configuration updated successfully!", "success");
+    } catch (err) {
+        PaybuntuModal.alert("Update Failed", "Failed to save configuration: " + err.message, "error");
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -617,10 +617,17 @@ function renderAdminMessages(messages) {
     chatBox.innerHTML = messages.map(msg => `
         <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
             ${msg.text}
+            <span class="chat-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         </div>
     `).join('');
     
-    chatBox.scrollTop = chatBox.scrollHeight;
+    // Smooth scroll to bottom
+    setTimeout(() => {
+        chatBox.scrollTo({
+            top: chatBox.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 100);
 }
 
 async function sendAdminReply() {
@@ -644,27 +651,49 @@ async function sendAdminReply() {
             hasUnread: false // Admin replied, so no new unread for admin
         });
     } catch(err) {
-        alert("Reply failed: " + err.message);
+        console.error(err);
+        PaybuntuModal.alert("Reply Error", "Reply failed: " + err.message, "error");
     }
 }
 
 // --- Global Receipt Viewer ---
-function viewGlobalReceipt(txId) {
+async function viewGlobalReceipt(txId) {
     const tx = allTransactions.find(t => t.id === txId);
     if(!tx) return;
 
-    // We can show a simple alert or reuse the receipt logic
-    const details = `
-        TRANSACTION RECEIPT
-        -------------------
-        Ref: ${tx.id}
-        Date: ${new Date(tx.date).toLocaleString()}
-        Amount: ${formatCurrency(Math.abs(tx.amount))}
-        Status: ${tx.status.toUpperCase()}
-        Description: ${tx.description}
-        Type: ${tx.type}
-        -------------------
-        PAYBUNTU ADMIN AUDIT
+    const receiptHtml = `
+        <div class="receipt-container" style="text-align: left; font-family: 'Courier New', monospace; line-height: 1.4;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-university" style="font-size: 24px; color: var(--primary);"></i>
+                <h4 style="margin: 10px 0 5px;">PAYBUNTU OFFICIAL</h4>
+                <small style="color: var(--text-muted);">TRANSACTION RECEIPT</small>
+            </div>
+            <div style="border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); padding: 15px 0; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Reference:</span> <span style="font-weight: bold;">#${tx.id.substring(0,8)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Date:</span> <span>${new Date(tx.date).toLocaleString()}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>Type:</span> <span>${tx.type}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Status:</span> <span style="color: var(--primary); font-weight: bold;">${tx.status.toUpperCase()}</span>
+                </div>
+            </div>
+            <div style="text-align: center; margin: 20px 0;">
+                <div style="font-size: 12px; color: var(--text-muted);">Amount</div>
+                <div style="font-size: 24px; font-weight: bold; color: var(--text-main);">${formatCurrency(Math.abs(tx.amount))}</div>
+            </div>
+            <div style="font-size: 13px; color: var(--text-muted); background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                ${tx.description}
+            </div>
+            <div style="text-align: center; color: var(--text-muted); font-size: 11px;">
+                PAYBUNTU ADMIN AUDIT LOG
+            </div>
+        </div>
     `;
-    alert(details);
+    
+    PaybuntuModal.alert("Transaction Receipt", receiptHtml, "info");
 }

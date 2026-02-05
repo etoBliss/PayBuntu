@@ -16,14 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Toggle logic
-    if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-            let theme = 'light';
-            if (document.documentElement.getAttribute('data-theme') !== 'dark') {
-                theme = 'dark';
-            }
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        });
-    }
+    const handleToggle = () => {
+        let theme = 'light';
+        if (document.documentElement.getAttribute('data-theme') !== 'dark') {
+            theme = 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    };
+
+    if (themeToggleBtn) themeToggleBtn.addEventListener('click', handleToggle);
+    
+    // Mobile toggle support
+    const mobileToggleBtn = document.getElementById('theme-toggle-mobile');
+    if (mobileToggleBtn) mobileToggleBtn.addEventListener('click', handleToggle);
 });
