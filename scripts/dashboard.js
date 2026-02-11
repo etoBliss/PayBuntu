@@ -59,26 +59,16 @@ function formatDate(dateString) {
 
 // Update the dashboard with user data
 function updateDashboard(userData) {
-  // Update user information
-  const userAvatar = document.getElementById("userAvatar");
-  const settingsAvatar = document.getElementById("settingsAvatar");
-  const accountPageAvatar = document.getElementById("accountPageAvatar");
+  const initials = (userData.firstName?.charAt(0) || "") + (userData.lastName?.charAt(0) || "");
+  const fullName = `${userData.firstName || ""} ${userData.lastName || ""}`;
 
-  if (userData.photoURL) {
-    const avatarHtml = `<img src="${userData.photoURL}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-    if (userAvatar) userAvatar.innerHTML = avatarHtml;
-    if (settingsAvatar) settingsAvatar.innerHTML = avatarHtml;
-    if (accountPageAvatar) accountPageAvatar.innerHTML = avatarHtml;
-  } else if (userData.firstName && userData.lastName) {
-    const initials = userData.firstName.charAt(0) + userData.lastName.charAt(0);
-    if (userAvatar) userAvatar.textContent = initials;
-    if (settingsAvatar) settingsAvatar.textContent = initials;
-    if (accountPageAvatar) accountPageAvatar.textContent = initials;
-  }
+  // Unified Avatar Rendering
+  setAvatar("userAvatar", userData.photoURL, initials);
+  setAvatar("accountPageAvatar", userData.photoURL, initials);
+  setAvatar("settingsAvatarContainer", userData.photoURL, initials);
 
-  document.getElementById("welcomeMessage").textContent = `${
-    userData.firstName + " " + userData.lastName 
-  }!`;
+  const welcomeMessage = document.getElementById("welcomeMessage");
+  if (welcomeMessage) welcomeMessage.textContent = `${fullName}!`;
 
   document.getElementById("userName").textContent = `${
     userData.firstName || ""
@@ -106,12 +96,9 @@ function updateDashboard(userData) {
   }
 
   // Populate Account Page
-  const fullName = `${userData.firstName || ""} ${userData.lastName || ""}`;
-  
   if(document.getElementById("accountPageName")) {
       document.getElementById("accountPageName").textContent = fullName;
       document.getElementById("accountPageEmail").textContent = userData.email || "";
-      // Initial setting removed here; handled in unified block above
       
       document.getElementById("accInfoName").textContent = fullName;
       document.getElementById("accInfoNum").textContent = userData.accountNumber || "N/A";
@@ -143,18 +130,45 @@ function updateDashboard(userData) {
   }
 }
 
+function setAvatar(containerId, photoURL, initials) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let img = container.querySelector('.avatar-img');
+    let initialsSpan = container.querySelector('.avatar-initials');
+
+    if (photoURL) {
+        if (!img) {
+            img = document.createElement('img');
+            img.className = 'avatar-img';
+            img.alt = 'Profile';
+            // Prepend so it appears behind elements like the edit button in settings
+            container.prepend(img);
+        }
+        img.src = photoURL;
+        img.style.display = 'block';
+        if (initialsSpan) initialsSpan.style.display = 'none';
+    } else {
+        if (img) img.style.display = 'none';
+        if (initialsSpan) {
+            initialsSpan.style.display = 'flex';
+            initialsSpan.textContent = initials || "PB";
+        }
+    }
+}
+
 // Settings Profile Update Logic
+// Logout Logic
+function handleLogout() {
+    sessionStorage.removeItem('is2FAVerified');
+    auth.signOut().then(() => {
+        window.location.href = "login.html";
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // System Config Listener
     listenToSystemConfig();
-
-    // Logout Logic
-    const handleLogout = () => {
-        sessionStorage.removeItem('is2FAVerified');
-        auth.signOut().then(() => {
-            window.location.href = "login.html";
-        });
-    };
 
     const logoutBtn = document.getElementById("logoutBtn");
     if(logoutBtn) logoutBtn.addEventListener("click", handleLogout);
@@ -859,6 +873,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Record this session
             recordLogin(user);
 
+            // Inactivity Setup
+            setupInactivityListeners();
+
             // Listen to User Data
             db.collection("users").doc(user.uid).onSnapshot((doc) => {
                 if(doc.exists) {
@@ -1082,6 +1099,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
       });
   });
+
+  // Delete Account Button
+  const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+  if(deleteAccountBtn) deleteAccountBtn.onclick = handleDeleteAccount;
 });
 
 function showSuccessModal(recipient, amount) {
@@ -1370,4 +1391,88 @@ function printMonthlyStatement() {
     `);
     printWindow.document.close();
     printWindow.print();
+}
+
+// --- Inactivity Auto-Logout Logic ---
+let inactivityTimer;
+const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+function resetInactivityTimer() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(handleLogout, INACTIVITY_TIMEOUT);
+}
+
+function setupInactivityListeners() {
+    console.log("Setting up inactivity listeners (30m timeout)");
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+        document.addEventListener(event, resetInactivityTimer, true);
+    });
+    resetInactivityTimer();
+}
+
+// --- Account Deletion Logic ---
+async function handleDeleteAccount() {
+    PaybuntuModal.confirm(
+        "Delete Account", 
+        "Are you absolutely sure? This action is permanent and will delete all your data including profile, balance, and transaction history. You cannot undo this.", 
+        "danger", 
+        async () => {
+            try {
+                const user = auth.currentUser;
+                if(!user) return;
+
+                const userId = user.uid;
+
+                // 1. Delete Firestore Data
+                console.log("Cleaning up user data for deletion...");
+                
+                // Delete user doc
+                await db.collection("users").doc(userId).delete();
+                
+                // Delete transactions
+                const txSnapshot = await db.collection("transactions").where("userId", "==", userId).get();
+                const batchSize = 10;
+                let txDocs = [];
+                txSnapshot.forEach(doc => txDocs.push(doc.ref));
+                
+                // Batch deletes for transactions
+                for(let i=0; i < txDocs.length; i += batchSize) {
+                    const batch = db.batch();
+                    txDocs.slice(i, i + batchSize).forEach(ref => batch.delete(ref));
+                    await batch.commit();
+                }
+
+                // Delete login history
+                const historySnapshot = await db.collection("login_history").where("userId", "==", userId).get();
+                let historyDocs = [];
+                historySnapshot.forEach(doc => historyDocs.push(doc.ref));
+                
+                for(let i=0; i < historyDocs.length; i += batchSize) {
+                    const batch = db.batch();
+                    historyDocs.slice(i, i + batchSize).forEach(ref => batch.delete(ref));
+                    await batch.commit();
+                }
+
+                // Delete support chats
+                await db.collection("support_chats").doc(userId).delete();
+
+                // 2. Delete Firebase Auth User
+                await user.delete();
+
+                // 3. Feedback and Logout
+                PaybuntuModal.alert("Account Deleted", "Your account has been permanently removed. We're sorry to see you go.", "info", () => {
+                    window.location.href = "login.html";
+                });
+
+            } catch (err) {
+                console.error("Deletion Error:", err);
+                if (err.code === 'auth/requires-recent-login') {
+                    PaybuntuModal.alert("Security Check", "For security, you must log in again before deleting your account.", "warning", () => handleLogout());
+                } else {
+                    PaybuntuModal.alert("Error", "Account deletion failed: " + err.message, "error");
+                }
+            }
+        }
+    );
 }

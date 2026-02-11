@@ -665,3 +665,16 @@ input:checked + .slider:before {
     background: rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 15px rgba(46, 220, 91, 0.1);
 }
+
+/* Ledger Specific Styles */
+.impact-inflow { color: var(--primary) !important; font-weight: 700; }
+.impact-outflow { color: #ea4335 !important; font-weight: 700; }
+.impact-neutral { color: var(--text-muted) !important; opacity: 0.8; }
+.impact-revenue { color: var(--warning) !important; font-weight: 700; }
+
+.admin-card .val#ledgerLiquidity {
+    background: linear-gradient(90deg, var(--text-main), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(46, 220, 91, 0.2));
+}

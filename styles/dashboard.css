@@ -175,17 +175,58 @@ body {
   align-items: center;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--primary);
-  color: white;
+/* Unified Avatar System */
+.avatar-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  font-weight: bold;
+  border-radius: 50%;
+  overflow: visible; /* Allow absolute elements like edit button to show */
+  position: relative;
+  flex-shrink: 0;
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.avatar-sm {
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+}
+
+.avatar-md {
+  width: 80px;
+  height: 80px;
+  font-size: 28px;
+}
+
+.avatar-lg {
+  width: 120px;
+  height: 120px;
+  font-size: 42px;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  overflow: hidden; /* Ensure image itself is clipped to circle */
+}
+
+.avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.user-avatar {
   margin-right: 15px;
 }
 
@@ -939,15 +980,7 @@ body {
 }
 
 .profile-avatar-large {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
   background: rgba(255,255,255,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  font-weight: bold;
   backdrop-filter: blur(5px);
   border: 2px solid rgba(255,255,255,0.3);
 }
@@ -1002,28 +1035,25 @@ body {
 .settings-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
+    gap: 40px;
+}
+
+.mobile-only-actions-card {
+    margin-top: 40px;
 }
 
 .profile-upload-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 30px;
+    justify-content: center;
+    padding: 20px 0;
 }
 
 .profile-upload-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
     background: var(--primary);
     color: white;
-    font-size: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    font-weight: bold;
+    cursor: pointer;
 }
 
 .edit-avatar-btn {
@@ -1143,23 +1173,15 @@ input:checked + .slider:before {
     display: block; 
 } */
 
-.settings-grid .card {
-    /* margin-bottom: 20px; */
-}
 
 /* Scoped Styles for Settings & Support Views */
 #view-settings .section-header, 
 #view-support .section-header {
-  margin-top: 10px;
+  margin-top: 0;
 }
 
-#view-support .account-overview {
-    display: block; /* Stack vertically for Help/Support */
-}
 
-#view-support .account-overview .card {
-    margin-bottom: 20px;
-}
+
 
 @media (max-width: 768px) {
     /* Kept for consistency if needed, though block is now default for settings */

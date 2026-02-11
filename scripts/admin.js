@@ -115,6 +115,9 @@ async function loadAdminData() {
         console.log("Rendering charts...");
         renderCharts();
 
+        // Render Ledger
+        renderLedger();
+
         // Load System Tools
         loadSystemConfig();
 
@@ -175,6 +178,69 @@ function renderTransactions(txs) {
             </td>
         </tr>
     `).join('');
+}
+
+// --- Bank Ledger Logic ---
+function renderLedger() {
+    const table = document.getElementById('ledgerTableBody');
+    if(!table) return;
+
+    // Sort transactions by date descending
+    const sorted = [...allTransactions].sort((a,b) => new Date(b.date) - new Date(a.date));
+    
+    let inflow = 0;
+    let outflow = 0;
+    let revenue = 0;
+
+    table.innerHTML = sorted.map(tx => {
+        const type = tx.type?.toLowerCase() || '';
+        const amount = Math.abs(tx.amount || 0);
+        const fee = tx.fee || 0;
+        const status = tx.status?.toLowerCase() || 'completed';
+        
+        let impactClass = '';
+        let impactText = '';
+        
+        // Only count completed transactions for ledger impact
+        if (status === 'completed') {
+            if (type === 'deposit' || type === 'top-up') {
+                inflow += amount;
+                impactClass = 'impact-inflow';
+                impactText = `+${formatCurrency(amount)} (Inflow)`;
+            } else if (type === 'withdrawal') {
+                outflow += amount;
+                impactClass = 'impact-outflow';
+                impactText = `-${formatCurrency(amount)} (Outflow)`;
+            } else {
+                impactClass = 'impact-neutral';
+                impactText = 'Neutral (Internal)';
+            }
+            revenue += fee;
+        } else {
+            impactClass = 'impact-neutral';
+            impactText = `Pending/Failed`;
+        }
+
+        return `
+            <tr>
+                <td>${new Date(tx.date).toLocaleDateString()}</td>
+                <td style="font-family: monospace; font-size: 11px;">${tx.id.substring(0, 12)}...</td>
+                <td>${tx.userName || tx.senderName || tx.userId || 'User'}</td>
+                <td><span class="status-pill" style="background: rgba(255,255,255,0.05)">${tx.type || 'Transfer'}</span></td>
+                <td>${formatCurrency(amount)}</td>
+                <td>${formatCurrency(fee)}</td>
+                <td class="${impactClass}">${impactText}</td>
+            </tr>
+        `;
+    }).join('');
+
+    // Update Ledger Stats
+    document.getElementById('ledgerInflow').textContent = formatCurrency(inflow);
+    document.getElementById('ledgerOutflow').textContent = formatCurrency(outflow);
+    document.getElementById('ledgerRevenue').textContent = formatCurrency(revenue);
+    document.getElementById('ledgerLiquidity').textContent = formatCurrency(inflow - outflow);
+    
+    console.log(`Ledger Rendered: Inflow=${inflow}, Outflow=${outflow}, Rev=${revenue}`);
 }
 
 // Search Logic

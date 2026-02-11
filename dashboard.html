@@ -74,7 +74,9 @@
           <i class="fas fa-bars"></i>
         </button>
         <div class="user-info">
-          <div class="user-avatar" id="userAvatar">PB</div>
+          <div class="avatar-container avatar-sm user-avatar" id="userAvatar">
+            <span class="avatar-initials">PB</span>
+          </div>
           <div class="welcome-text">
             <h2 id="welcomeMessage">
               <i class="fas fa-spinner fa-spin"></i>
@@ -257,7 +259,9 @@
         </div>
 
         <div class="account-profile-header card">
-          <div class="profile-avatar-large" id="accountPageAvatar">PB</div>
+          <div class="avatar-container avatar-md profile-avatar-large" id="accountPageAvatar">
+            <span class="avatar-initials">PB</span>
+          </div>
           <div class="profile-info">
             <h3 id="accountPageName">Loading...</h3>
             <p id="accountPageEmail" class="text-muted">loading...</p>
@@ -330,8 +334,8 @@
             </div>
 
             <div class="profile-upload-section">
-              <div class="profile-upload-avatar">
-                <span id="settingsAvatar">PB</span>
+              <div class="avatar-container avatar-lg profile-upload-avatar" id="settingsAvatarContainer">
+                <span class="avatar-initials">PB</span>
                 <div class="edit-avatar-btn" onclick="document.getElementById('avatarUpload').click()">
                   <i class="fas fa-camera"></i>
                 </div>
@@ -340,6 +344,7 @@
               <p class="text-muted" id="uploadStatusText" style="margin-top: 10px; font-size: 13px;">Click to upload new
                 photo</p>
             </div>
+
 
             <form id="profileForm" style="margin-top: 20px;">
               <div class="form-group">
@@ -365,7 +370,7 @@
             </form>
           </div>
 
-          <!-- Security Settings -->
+          <!-- Security Settings - Now inside the grid for proper spacing -->
           <div class="card">
             <div class="card-header">
               <div class="card-title">Security</div>
@@ -409,46 +414,63 @@
               <button class="btn btn-outline btn-sm" id="setupPinBtn">Manage</button>
             </div>
           </div>
+        </div> <!-- End of settings-grid -->
 
-          <!-- Mobile Only Actions -->
-          <div class="card mobile-only-actions-card">
-            <div class="card-header">
-              <div class="card-title">Mobile Preferences</div>
-              <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);"><i
-                  class="fas fa-mobile-alt"></i></div>
-            </div>
+        <!-- Mobile Only Actions -->
+        <div class="card mobile-only-actions-card">
+          <div class="card-header">
+            <div class="card-title">Mobile Preferences</div>
+            <div class="card-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);"><i
+                class="fas fa-mobile-alt"></i></div>
+          </div>
 
-            <div class="security-option">
-              <div class="sec-info">
-                <h4>Dark Mode</h4>
-                <p class="text-muted">Toggle app appearance</p>
-              </div>
-              <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle Dark Mode"
-                style="border: 1px solid var(--border);">
-                <i class="fas fa-moon"></i>
-              </button>
+          <div class="security-option">
+            <div class="sec-info">
+              <h4>Dark Mode</h4>
+              <p class="text-muted">Toggle app appearance</p>
             </div>
+            <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle Dark Mode"
+              style="border: 1px solid var(--border);">
+              <i class="fas fa-moon"></i>
+            </button>
+          </div>
 
-            <div class="security-option">
-              <div class="sec-info">
-                <h4>Notifications</h4>
-                <p class="text-muted">View recent alerts</p>
-              </div>
-              <button class="btn btn-outline btn-sm"
-                onclick="PaybuntuModal.alert('Notifications', 'No new notifications.', 'info')">View</button>
+          <div class="security-option">
+            <div class="sec-info">
+              <h4>Notifications</h4>
+              <p class="text-muted">View recent alerts</p>
             </div>
+            <button class="btn btn-outline btn-sm"
+              onclick="PaybuntuModal.alert('Notifications', 'No new notifications.', 'info')">View</button>
+          </div>
 
-            <div class="security-option"
-              style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
-              <div class="sec-info">
-                <h4 style="color: var(--danger);">Logout</h4>
-                <p class="text-muted">Securely sign out</p>
-              </div>
-              <button class="btn btn-outline btn-sm" id="logoutBtnMobile"
-                style="border-color: var(--danger); color: var(--danger);">
-                <i class="fas fa-sign-out-alt"></i> Sign Out
-              </button>
+          <div class="security-option"
+            style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div class="sec-info">
+              <h4 style="color: var(--danger);">Logout</h4>
+              <p class="text-muted">Securely sign out</p>
             </div>
+            <button class="btn btn-outline btn-sm" id="logoutBtnMobile"
+              style="border-color: var(--danger); color: var(--danger);">
+              <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card" style="margin-top: 20px; border: 1px solid rgba(234, 67, 53, 0.2);">
+          <div class="card-header">
+            <div class="card-title" style="color: var(--danger);">Danger Zone</div>
+            <div class="card-icon" style="background: rgba(234, 67, 53, 0.1); color: var(--danger);"><i
+                class="fas fa-exclamation-triangle"></i></div>
+          </div>
+          <div class="security-option">
+            <div class="sec-info">
+              <h4>Delete Account</h4>
+              <p class="text-muted">Permanently remove your account and all data</p>
+            </div>
+            <button class="btn btn-outline btn-sm" id="deleteAccountBtn"
+              style="border-color: var(--danger); color: var(--danger);">Delete</button>
           </div>
         </div>
       </div>
@@ -499,276 +521,279 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Password Change Modal -->
-    <div id="passwordModal" class="modal-overlay hidden">
-      <div class="modal-content fade-in">
-        <div class="modal-header">
-          <h3>Change Password</h3>
-          <button class="close-modal" onclick="closePasswordModal()">&times;</button>
+      <!-- Password Change Modal -->
+      <div id="passwordModal" class="modal-overlay hidden">
+        <div class="modal-content fade-in">
+          <div class="modal-header">
+            <h3>Change Password</h3>
+            <button class="close-modal" onclick="closePasswordModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="passwordForm">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" class="form-input" id="currentPassword" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" class="form-input" id="newPassword" required minlength="6">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" class="form-input" id="confirmPassword" required minlength="6">
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Update
+                Password</button>
+            </form>
+          </div>
         </div>
-        <div class="modal-body">
-          <form id="passwordForm">
-            <div class="form-group">
-              <label class="form-label">Current Password</label>
-              <input type="password" class="form-input" id="currentPassword" required>
+      </div>
+
+      <!-- Login History Modal -->
+      <div id="loginHistoryModal" class="modal-overlay hidden">
+        <div class="modal-content fade-in" style="max-width: 600px;">
+          <div class="modal-header">
+            <h3>Login History</h3>
+            <button class="close-modal" onclick="closeLoginHistoryModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="loginHistoryList" style="max-height: 400px; overflow-y: auto;">
+              <!-- History items will be populated here -->
+              <div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
             </div>
-            <div class="form-group">
-              <label class="form-label">New Password</label>
-              <input type="password" class="form-input" id="newPassword" required minlength="6">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2FA Verification Modal -->
+      <div id="twoFactorModal" class="modal-overlay hidden" style="z-index: 9999;">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3>2FA Verification</h3>
+            <button class="close-modal" id="close2FAModal" onclick="close2FAModal()">&times;</button>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <div style="margin-bottom: 20px;">
+              <i class="fas fa-shield-alt" style="font-size: 48px; color: var(--primary);"></i>
             </div>
-            <div class="form-group">
-              <label class="form-label">Confirm New Password</label>
-              <input type="password" class="form-input" id="confirmPassword" required minlength="6">
+            <p>Two-factor authentication is enabled. Please enter the verification code sent to your phone.</p>
+            <form id="twoFactorForm">
+              <div class="form-group" style="margin-top: 20px;">
+                <input type="password" class="form-input" id="twoFactorCode" placeholder="Enter 6-digit code"
+                  maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;" required>
+              </div>
+              <button type="submit" id="verify2FABtn" class="btn btn-primary"
+                style="width: 100%; justify-content: center; margin-top: 10px;">Verify & Continue</button>
+            </form>
+            <p id="twoFactorError" style="color: var(--danger); font-size: 13px; margin-top: 10px;" class="hidden">
+              Invalid
+              code. Please try again.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup/Manage PIN Modal -->
+      <div id="setupPinModal" class="modal-overlay hidden">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3 id="pinModalTitle">Setup Transaction PIN</h3>
+            <button class="close-modal" onclick="closeSetupPinModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="setupPinForm">
+              <div class="form-group">
+                <label class="form-label" id="currentPinLabel">Enter 4-Digit PIN</label>
+                <input type="password" class="form-input" id="newTransactionPin" maxlength="4" placeholder="••••"
+                  style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+              </div>
+              <div class="form-group" id="confirmPinGroup">
+                <label class="form-label">Confirm PIN</label>
+                <input type="password" class="form-input" id="confirmTransactionPin" maxlength="4" placeholder="••••"
+                  style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Save
+                PIN</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction Confirmation Modal -->
+      <div id="confirmTransferModal" class="modal-overlay hidden">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3>Confirm Transfer</h3>
+            <button class="close-modal" onclick="closeConfirmModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h2 id="confirmAmount" style="font-size: 32px; color: var(--danger);">NGN 0.00</h2>
+              <p class="text-muted">Transferring to</p>
+              <h4 id="confirmRecipient">Recipient Name</h4>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Update
-              Password</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Login History Modal -->
-    <div id="loginHistoryModal" class="modal-overlay hidden">
-      <div class="modal-content fade-in" style="max-width: 600px;">
-        <div class="modal-header">
-          <h3>Login History</h3>
-          <button class="close-modal" onclick="closeLoginHistoryModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div id="loginHistoryList" style="max-height: 400px; overflow-y: auto;">
-            <!-- History items will be populated here -->
-            <div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2FA Verification Modal -->
-    <div id="twoFactorModal" class="modal-overlay hidden" style="z-index: 9999;">
-      <div class="modal-content fade-in" style="max-width: 400px;">
-        <div class="modal-header">
-          <h3>2FA Verification</h3>
-          <button class="close-modal" id="close2FAModal" onclick="close2FAModal()">&times;</button>
-        </div>
-        <div class="modal-body" style="text-align: center;">
-          <div style="margin-bottom: 20px;">
-            <i class="fas fa-shield-alt" style="font-size: 48px; color: var(--primary);"></i>
-          </div>
-          <p>Two-factor authentication is enabled. Please enter the verification code sent to your phone.</p>
-          <form id="twoFactorForm">
-            <div class="form-group" style="margin-top: 20px;">
-              <input type="password" class="form-input" id="twoFactorCode" placeholder="Enter 6-digit code"
-                maxlength="6" style="text-align: center; font-size: 24px; letter-spacing: 5px;" required>
+            <div class="tx-details-list" style="margin-bottom: 20px;">
+              <div class="detail-row"><span>Method</span><span>Instant Transfer</span></div>
+              <div class="detail-row"><span>Fee</span><span id="confirmFee">Free</span></div>
             </div>
-            <button type="submit" id="verify2FABtn" class="btn btn-primary"
-              style="width: 100%; justify-content: center; margin-top: 10px;">Verify & Continue</button>
-          </form>
-          <p id="twoFactorError" style="color: var(--danger); font-size: 13px; margin-top: 10px;" class="hidden">Invalid
-            code. Please try again.</p>
+            <button id="proceedToPinBtn" class="btn btn-primary" style="width: 100%; justify-content: center;">Confirm &
+              Proceed</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Setup/Manage PIN Modal -->
-    <div id="setupPinModal" class="modal-overlay hidden">
-      <div class="modal-content fade-in" style="max-width: 400px;">
-        <div class="modal-header">
-          <h3 id="pinModalTitle">Setup Transaction PIN</h3>
-          <button class="close-modal" onclick="closeSetupPinModal()">&times;</button>
+      <!-- Enter PIN Modal -->
+      <div id="enterPinModal" class="modal-overlay hidden">
+        <div class="modal-content fade-in" style="max-width: 400px;">
+          <div class="modal-header">
+            <h3>Verify PIN</h3>
+            <button class="close-modal" onclick="closeEnterPinModal()">&times;</button>
+          </div>
+          <div class="modal-body" style="text-align: center;">
+            <p>Please enter your 4-digit transaction PIN to authorize this transfer.</p>
+            <form id="authPinForm">
+              <div class="form-group" style="margin-top: 20px;">
+                <input type="password" class="form-input" id="authPinInput" maxlength="4" placeholder="••••"
+                  style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+              </div>
+              <button type="submit" id="verifyPinBtn" class="btn btn-primary"
+                style="width: 100%; justify-content: center;">Authorize</button>
+            </form>
+            <p id="pinAuthError" style="color: var(--danger); font-size: 13px; margin-top: 10px;" class="hidden">
+              Incorrect
+              PIN. Please try again.</p>
+          </div>
         </div>
-        <div class="modal-body">
-          <form id="setupPinForm">
-            <div class="form-group">
-              <label class="form-label" id="currentPinLabel">Enter 4-Digit PIN</label>
-              <input type="password" class="form-input" id="newTransactionPin" maxlength="4" placeholder="••••"
-                style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+      </div>
+
+      <!-- Transaction Success Modal -->
+      <div id="successModal" class="modal-overlay hidden" style="z-index: 10000;">
+        <div class="modal-content fade-in" style="max-width: 400px; text-align: center;">
+          <div style="margin-bottom: 25px;">
+            <div
+              style="width: 80px; height: 80px; background: rgba(46, 220, 91, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 40px;">
+              <i class="fas fa-check"></i>
             </div>
-            <div class="form-group" id="confirmPinGroup">
-              <label class="form-label">Confirm PIN</label>
-              <input type="password" class="form-input" id="confirmTransactionPin" maxlength="4" placeholder="••••"
-                style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+          </div>
+          <h2 style="font-weight: 700; margin-bottom: 10px;">Transfer Successful!</h2>
+          <p class="text-muted" style="margin-bottom: 20px;">Your money has been sent successfully.</p>
+
+          <div id="successDetails"
+            style="background: var(--bg-body); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+            <h2 id="successAmount" style="font-size: 28px; font-weight: 700; margin-bottom: 5px;">NGN 0.00</h2>
+            <p class="text-muted">to <span id="successRecipient"
+                style="font-weight: 600; color: var(--text-main);">Recipient</span></p>
+            <p class="text-muted" style="font-size: 11px; margin-top: 10px; font-family: monospace;">Ref: <span
+                id="successRef">#000000</span></p>
+          </div>
+
+          <button onclick="closeSuccessAndGoHome()" class="btn btn-primary"
+            style="width: 100%; justify-content: center;">Back to Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Full History Modal -->
+      <div id="fullHistoryModal" class="modal-overlay hidden">
+        <div class="modal-content modal-xl fade-in"
+          style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+          <div class="modal-header" style="border-bottom: 1px solid var(--border); padding: 25px;">
+            <h3 style="font-size: 20px; font-weight: 700;">Transaction History</h3>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-outline btn-sm" onclick="printMonthlyStatement()" title="Print Statement">
+                <i class="fas fa-print"></i>
+              </button>
+              <button class="close-modal" onclick="closeFullHistory()"
+                style="position: static; font-size: 24px;">&times;</button>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Save
-              PIN</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Transaction Confirmation Modal -->
-    <div id="confirmTransferModal" class="modal-overlay hidden">
-      <div class="modal-content fade-in" style="max-width: 400px;">
-        <div class="modal-header">
-          <h3>Confirm Transfer</h3>
-          <button class="close-modal" onclick="closeConfirmModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 id="confirmAmount" style="font-size: 32px; color: var(--danger);">NGN 0.00</h2>
-            <p class="text-muted">Transferring to</p>
-            <h4 id="confirmRecipient">Recipient Name</h4>
           </div>
-          <div class="tx-details-list" style="margin-bottom: 20px;">
-            <div class="detail-row"><span>Method</span><span>Instant Transfer</span></div>
-            <div class="detail-row"><span>Fee</span><span id="confirmFee">Free</span></div>
-          </div>
-          <button id="proceedToPinBtn" class="btn btn-primary" style="width: 100%; justify-content: center;">Confirm &
-            Proceed</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Enter PIN Modal -->
-    <div id="enterPinModal" class="modal-overlay hidden">
-      <div class="modal-content fade-in" style="max-width: 400px;">
-        <div class="modal-header">
-          <h3>Verify PIN</h3>
-          <button class="close-modal" onclick="closeEnterPinModal()">&times;</button>
-        </div>
-        <div class="modal-body" style="text-align: center;">
-          <p>Please enter your 4-digit transaction PIN to authorize this transfer.</p>
-          <form id="authPinForm">
-            <div class="form-group" style="margin-top: 20px;">
-              <input type="password" class="form-input" id="authPinInput" maxlength="4" placeholder="••••"
-                style="text-align: center; font-size: 24px; letter-spacing: 12px;" required>
+          <div class="history-filters">
+            <div class="filter-group" style="flex: 0 0 200px;">
+              <i class="fas fa-calendar-alt"></i>
+              <select id="monthFilter" onchange="filterHistoryByMonth()">
+                <option value="all">All Time History</option>
+              </select>
             </div>
-            <button type="submit" id="verifyPinBtn" class="btn btn-primary"
-              style="width: 100%; justify-content: center;">Authorize</button>
-          </form>
-          <p id="pinAuthError" style="color: var(--danger); font-size: 13px; margin-top: 10px;" class="hidden">Incorrect
-            PIN. Please try again.</p>
+            <div class="filter-group" style="flex: 1;">
+              <i class="fas fa-search"></i>
+              <input type="text" id="historySearch" placeholder="Search by description or status..."
+                oninput="filterHistoryBySearch()">
+            </div>
+          </div>
+
+          <div class="history-summary">
+            <div class="summary-card income">
+              <div class="card-label">Monthly Incoming</div>
+              <div class="card-value" id="monthlyIn">NGN 0.00</div>
+            </div>
+            <div class="summary-card expense">
+              <div class="card-label">Monthly Outgoing</div>
+              <div class="card-value" id="monthlyOut">NGN 0.00</div>
+            </div>
+          </div>
+
+          <div class="history-modal-body" id="fullHistoryBody">
+            <!-- History groups populated by JS -->
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Transaction Success Modal -->
-    <div id="successModal" class="modal-overlay hidden" style="z-index: 10000;">
-      <div class="modal-content fade-in" style="max-width: 400px; text-align: center;">
-        <div style="margin-bottom: 25px;">
-          <div
-            style="width: 80px; height: 80px; background: rgba(46, 220, 91, 0.1); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 40px;">
-            <i class="fas fa-check"></i>
-          </div>
-        </div>
-        <h2 style="font-weight: 700; margin-bottom: 10px;">Transfer Successful!</h2>
-        <p class="text-muted" style="margin-bottom: 20px;">Your money has been sent successfully.</p>
-
-        <div id="successDetails"
-          style="background: var(--bg-body); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-          <h2 id="successAmount" style="font-size: 28px; font-weight: 700; margin-bottom: 5px;">NGN 0.00</h2>
-          <p class="text-muted">to <span id="successRecipient"
-              style="font-weight: 600; color: var(--text-main);">Recipient</span></p>
-          <p class="text-muted" style="font-size: 11px; margin-top: 10px; font-family: monospace;">Ref: <span
-              id="successRef">#000000</span></p>
-        </div>
-
-        <button onclick="closeSuccessAndGoHome()" class="btn btn-primary"
-          style="width: 100%; justify-content: center;">Back to Dashboard</button>
-      </div>
-    </div>
-
-    <!-- Full History Modal -->
-    <div id="fullHistoryModal" class="modal-overlay hidden">
-      <div class="modal-content modal-xl fade-in"
-        style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
-        <div class="modal-header" style="border-bottom: 1px solid var(--border); padding: 25px;">
-          <h3 style="font-size: 20px; font-weight: 700;">Transaction History</h3>
-          <div style="display: flex; gap: 10px;">
-            <button class="btn btn-outline btn-sm" onclick="printMonthlyStatement()" title="Print Statement">
-              <i class="fas fa-print"></i>
-            </button>
-            <button class="close-modal" onclick="closeFullHistory()"
-              style="position: static; font-size: 24px;">&times;</button>
-          </div>
-        </div>
-
-        <div class="history-filters">
-          <div class="filter-group" style="flex: 0 0 200px;">
-            <i class="fas fa-calendar-alt"></i>
-            <select id="monthFilter" onchange="filterHistoryByMonth()">
-              <option value="all">All Time History</option>
-            </select>
-          </div>
-          <div class="filter-group" style="flex: 1;">
-            <i class="fas fa-search"></i>
-            <input type="text" id="historySearch" placeholder="Search by description or status..."
-              oninput="filterHistoryBySearch()">
-          </div>
-        </div>
-
-        <div class="history-summary">
-          <div class="summary-card income">
-            <div class="card-label">Monthly Incoming</div>
-            <div class="card-value" id="monthlyIn">NGN 0.00</div>
-          </div>
-          <div class="summary-card expense">
-            <div class="card-label">Monthly Outgoing</div>
-            <div class="card-value" id="monthlyOut">NGN 0.00</div>
-          </div>
-        </div>
-
-        <div class="history-modal-body" id="fullHistoryBody">
-          <!-- History groups populated by JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- Support Chat Modal -->
-    <div id="supportChatModal" class="modal-overlay hidden">
-      <div class="modal-content chat-modal fade-in">
-        <div class="modal-header">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="chat-avatar">AD</div>
-            <div>
-              <h3 style="margin: 0; font-size: 16px;">Paybuntu Support</h3>
-              <div class="status-indicator">
-                <div class="pulse-dot"></div>
-                Online (24/7)
+      <!-- Support Chat Modal -->
+      <div id="supportChatModal" class="modal-overlay hidden">
+        <div class="modal-content chat-modal fade-in">
+          <div class="modal-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="chat-avatar">AD</div>
+              <div>
+                <h3 style="margin: 0; font-size: 16px;">Paybuntu Support</h3>
+                <div class="status-indicator">
+                  <div class="pulse-dot"></div>
+                  Online (24/7)
+                </div>
               </div>
             </div>
+            <button class="close-modal" onclick="closeSupportChat()">&times;</button>
           </div>
-          <button class="close-modal" onclick="closeSupportChat()">&times;</button>
-        </div>
-        <div class="modal-body chat-body" id="chatMessages">
-          <div class="chat-bubble bot">
-            Hello! I'm your Paybuntu support assistant. How can I help you today?
+          <div class="modal-body chat-body" id="chatMessages">
+            <div class="chat-bubble bot">
+              Hello! I'm your Paybuntu support assistant. How can I help you today?
+            </div>
+            <!-- Messages will be populated here -->
           </div>
-          <!-- Messages will be populated here -->
-        </div>
-        <div class="chat-footer">
-          <form id="chatForm">
-            <input type="text" id="chatInput" placeholder="Type a message..." required autocomplete="off">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-paper-plane"></i></button>
-          </form>
+          <div class="chat-footer">
+            <form id="chatForm">
+              <input type="text" id="chatInput" placeholder="Type a message..." required autocomplete="off">
+              <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Mobile Footer Navigation -->
-    <footer class="mobile-footer-nav">
-      <div class="nav-item active" data-target="view-dashboard">
-        <i class="fas fa-home"></i>
-        <span>Home</span>
-      </div>
-      <div class="nav-item" data-target="view-transfer">
-        <i class="fas fa-exchange-alt"></i>
-        <span>Pay</span>
-      </div>
-      <div class="nav-item" data-target="view-account">
-        <i class="fas fa-wallet"></i>
-        <span>Vault</span>
-      </div>
-      <div class="nav-item" data-target="view-settings">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
-      </div>
-      <div class="nav-item" data-target="view-support">
-        <i class="fas fa-question-circle"></i>
-        <span>Help</span>
-      </div>
-    </footer>
+      <!-- Mobile Footer Navigation -->
+      <footer class="mobile-footer-nav">
+        <div class="nav-item active" data-target="view-dashboard">
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </div>
+        <div class="nav-item" data-target="view-transfer">
+          <i class="fas fa-exchange-alt"></i>
+          <span>Pay</span>
+        </div>
+        <div class="nav-item" data-target="view-account">
+          <i class="fas fa-wallet"></i>
+          <span>Vault</span>
+        </div>
+        <div class="nav-item" data-target="view-settings">
+          <i class="fas fa-cog"></i>
+          <span>Settings</span>
+        </div>
+        <div class="nav-item" data-target="view-support">
+          <i class="fas fa-question-circle"></i>
+          <span>Help</span>
+        </div>
+      </footer>
+
+    </div>
 
     <!-- Firebase SDKs -->
     <script src="scripts/modalservice.js"></script>
