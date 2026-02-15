@@ -881,15 +881,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(doc.exists) {
                     const userData = doc.data();
                     updateDashboard(userData);
-
-                    /* 2FA Login Shield - Disabled for now
-                    if(userData.twoFactorEnabled && !is2FAVerified) {
-                        document.querySelector('.dashboard-container').style.opacity = "0.1";
-                        document.querySelector('.dashboard-container').style.pointerEvents = "none";
-                        open2FAModal(true);
-                    }
-                    */
                 }
+            }, err => {
+                console.error("User Data Sync Error:", err);
             });
             
             // Listen to Transactions
@@ -1139,14 +1133,14 @@ function listenToChatMessages() {
             const data = doc.data();
             const messages = data.messages || [];
             
-            // Render basic messages
+            // Render messages
             chatBox.innerHTML = `
                 <div class="chat-bubble bot">
                     Hello! I'm your Paybuntu support assistant. How can I help you today?
                     <span class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
                 ${messages.map(msg => `
-                    <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
+                    <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : (msg.sender === 'ai' ? 'bot' : 'user')}">
                         ${msg.text}
                         <span class="chat-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
@@ -1160,6 +1154,8 @@ function listenToChatMessages() {
                 });
             }, 100);
         }
+    }, err => {
+        console.error("Support Chat Sync Error:", err);
     });
 }
 
@@ -1204,6 +1200,25 @@ async function sendSupportMessage() {
                 hasUnread: true,
                 userName: userName // Ensure it's up to date
             });
+        }
+
+        // --- AI Response Logic ---
+        if(systemConfig.aiSupportEnabled && typeof PaybuntuAI !== 'undefined') {
+            setTimeout(async () => {
+                const aiResponseText = PaybuntuAI.generateResponse(text);
+                const aiMessage = {
+                    text: aiResponseText,
+                    sender: 'ai',
+                    timestamp: new Date().toISOString()
+                };
+
+                await chatRef.update({
+                    messages: firebase.firestore.FieldValue.arrayUnion(aiMessage),
+                    lastMessage: aiResponseText,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    hasUnread: false // Bot response doesn't count as "unread" for admin
+                });
+            }, 1000); // 1 second delay for "thinking" feel
         }
     } catch(err) {
         console.error("Chat send error:", err);

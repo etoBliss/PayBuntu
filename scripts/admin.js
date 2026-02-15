@@ -35,8 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupNavigation();
     setupFilters();
     setupConfigListeners();
-    setupSupportHub();
-    setupAuditLogs();
 });
 
 function setupFilters() {
@@ -63,9 +61,18 @@ function checkAdminAuth() {
             return;
         }
 
-        console.log("Admin authenticated successfully as: " + user.email);
+        console.log("Admin auth state:", {
+            uid: user.uid,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            providerData: user.providerData
+        });
         document.getElementById('adminEmail').textContent = user.email;
         loadAdminData();
+        
+        // Only start these listeners AFTER admin auth is confirmed
+        setupSupportHub();
+        setupAuditLogs();
     });
 }
 
@@ -590,6 +597,7 @@ async function loadSystemConfig() {
         if(doc.exists) {
             const data = doc.data();
             document.getElementById("maintenanceToggle").checked = data.maintenanceMode || false;
+            document.getElementById("aiSupportToggle").checked = data.aiSupportEnabled || false;
             document.getElementById("transferFeePercent").value = data.transferFeePercent || 0;
             document.getElementById("minTransferFee").value = data.minTransferFee || 0;
             document.getElementById("broadcastMessage").value = data.broadcastMessage || "";
@@ -607,6 +615,7 @@ async function saveSystemConfig() {
 
     const config = {
         maintenanceMode: document.getElementById("maintenanceToggle").checked,
+        aiSupportEnabled: document.getElementById("aiSupportToggle").checked,
         transferFeePercent: parseFloat(document.getElementById("transferFeePercent").value) || 0,
         minTransferFee: parseFloat(document.getElementById("minTransferFee").value) || 0,
         broadcastMessage: document.getElementById("broadcastMessage").value,
@@ -615,11 +624,11 @@ async function saveSystemConfig() {
     };
 
     try {
-        await db.collection("metadata").doc("system").set(config, { merge: true });
+        await db.collection("metadata").doc("config").set(config, { merge: true });
         
         await logAdminAction("SYSTEM_CONFIG", {
             maintenanceMode: config.maintenanceMode,
-            feePercent: config.feePercent,
+            feePercent: config.transferFeePercent,
             message: config.broadcastMessage ? "Updated" : "Cleared"
         });
 
@@ -655,6 +664,8 @@ function setupSupportHub() {
             const updated = activeChats.find(c => c.id === selectedChatId);
             if(updated) renderAdminMessages(updated.messages);
         }
+    }, err => {
+        console.error("Support Hub Sync Error:", err);
     });
 }
 
@@ -705,7 +716,7 @@ function renderAdminMessages(messages) {
     if(!chatBox || !messages) return;
 
     chatBox.innerHTML = messages.map(msg => `
-        <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : 'user'}">
+        <div class="chat-bubble ${msg.sender === 'admin' ? 'admin' : (msg.sender === 'ai' ? 'bot' : 'user')}">
             ${msg.text}
             <span class="chat-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         </div>
@@ -808,6 +819,8 @@ function setupAuditLogs() {
     db.collection("audit_logs").orderBy("timestamp", "desc").limit(50).onSnapshot(snapshot => {
         allAuditLogs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderAuditLogs();
+    }, err => {
+        console.error("Audit Logs Sync Error:", err);
     });
 }
 
